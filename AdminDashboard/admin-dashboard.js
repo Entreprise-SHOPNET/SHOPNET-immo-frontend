@@ -1,8 +1,8 @@
 
 
 // Configuration API
-// Configuration
-const API_BASE = 'http://100.64.134.89:5000/api/admin/biens';
+// Configuration PRODUCTION (Render)
+const API_BASE = 'https://shopnet-immo-backend.onrender.com/api/admin/biens';
 
 // État global
 let currentView = 'pending';     // 'pending' ou 'approved'

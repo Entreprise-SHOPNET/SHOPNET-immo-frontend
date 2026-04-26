@@ -4,7 +4,7 @@
 // Configuration API
 // API
 // API Configuration
-const API_BASE = 'http://100.64.134.89:5000/api/biens';
+const API_BASE = 'https://shopnet-immo-backend.onrender.com/api/biens';
 let currentBien = null;
 let favoriteIds = [];
 

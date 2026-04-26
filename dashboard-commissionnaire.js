@@ -1,7 +1,7 @@
 
 
 // Configuration// Configuration
-const API_BASE = 'http://100.64.134.89:5000/api/agent';
+const API_BASE = 'https://shopnet-immo-backend.onrender.com/api/agent';
 
 function getToken() {
   return localStorage.getItem('token');

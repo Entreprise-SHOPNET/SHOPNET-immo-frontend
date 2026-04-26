@@ -1,7 +1,7 @@
 
 
 
-const API_URL = 'http://100.64.134.89:5000/api/biens/public';
+const API_URL = 'https://shopnet-immo-backend.onrender.com/api/biens/public';
 
 let allProperties = [];
 let filteredProperties = [];

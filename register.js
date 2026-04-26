@@ -293,7 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
     submitBtn.textContent = 'Envoi en cours...';
 
     try {
-      const response = await fetch('http://100.64.134.89:5000/api/commissionnaires/register', {
+      const response = await fetch('https://shopnet-immo-backend.onrender.com/api/commissionnaires/register', {
         method: 'POST',
         body: formData
       });

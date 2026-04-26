@@ -1,9 +1,9 @@
 
 
 
-// Configuration
-const API_BASE = 'http://100.64.134.89:5000/api/agent';
-const ANALYTICS_BASE = 'http://100.64.134.89:5000/api/analytics';
+// Configuration PRODUCTION (Render)
+const API_BASE = 'https://shopnet-immo-backend.onrender.com/api/agent';
+const ANALYTICS_BASE = 'https://shopnet-immo-backend.onrender.com/api/analytics';
 
 function getToken() {
   return localStorage.getItem('token');

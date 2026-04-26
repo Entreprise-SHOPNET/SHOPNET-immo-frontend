@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const errorPassword = document.getElementById("error_password");
   const messageBox = document.getElementById("messageBox");
 
-  const API_URL = "http://100.64.134.89:5000/api/commissionnaires/login";
+const API_URL = "https://shopnet-immo-backend.onrender.com/api/commissionnaires/login";
 
   function clearErrors() {
     errorTelephone.textContent = "";
