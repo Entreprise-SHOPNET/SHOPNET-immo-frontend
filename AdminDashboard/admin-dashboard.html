@@ -1,0 +1,153 @@
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHOPNET-IMMO | Administration</title>
+    <link rel="stylesheet" href="admin-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="admin-profile">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=00182A&color=fff&size=100" alt="Admin">
+                    <h3>Administrateur SHOPNET</h3>
+                    <p>Commissionnaires vérifiés</p>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active" data-filter="all">
+                        <a href="#" onclick="filterByStatus('all')">
+                            <i class="fas fa-users"></i>
+                            <span>Tous les comptes</span>
+                        </a>
+                    </li>
+                    <li data-filter="PENDING">
+                        <a href="#" onclick="filterByStatus('PENDING')">
+                            <i class="fas fa-clock"></i>
+                            <span>En attente</span>
+                            <span id="pending-count" class="badge">0</span>
+                        </a>
+                    </li>
+                    <li data-filter="ACTIVE">
+                        <a href="#" onclick="filterByStatus('ACTIVE')">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Actifs</span>
+                        </a>
+                    </li>
+                    <li data-filter="REJECTED">
+                        <a href="#" onclick="filterByStatus('REJECTED')">
+                            <i class="fas fa-times-circle"></i>
+                            <span>Rejetés</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Déconnexion
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="main-header">
+                <div class="header-left">
+                    <h1>Tableau de bord</h1>
+                    <p>Gestion des commissionnaires SHOPNET-IMMO</p>
+                </div>
+                <div class="stats-cards">
+                    <div class="stat-card pending">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <h3 id="stat-pending">0</h3>
+                            <p>En attente</p>
+                        </div>
+                    </div>
+                    <div class="stat-card active">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <h3 id="stat-active">0</h3>
+                            <p>Actifs</p>
+                        </div>
+                    </div>
+                    <div class="stat-card rejected">
+                        <i class="fas fa-times-circle"></i>
+                        <div>
+                            <h3 id="stat-rejected">0</h3>
+                            <p>Rejetés</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Filtres et recherche -->
+            <div class="filters-bar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Rechercher par nom, téléphone, email...">
+                    <button onclick="searchUsers()"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="filter-group">
+                    <label>Période :</label>
+                    <select id="periodFilter" onchange="filterByPeriod()">
+                        <option value="all">Toutes dates</option>
+                        <option value="today">Aujourd'hui</option>
+                        <option value="week">Cette semaine</option>
+                        <option value="month">Ce mois</option>
+                    </select>
+                </div>
+                <button class="refresh-btn" onclick="loadAllData()"><i class="fas fa-sync-alt"></i> Actualiser</button>
+            </div>
+
+            <!-- Tableau des utilisateurs -->
+            <div class="table-container">
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th><th>Nom complet</th><th>Téléphone</th><th>Email</th><th>Statut</th><th>Date inscription</th><th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr><td colspan="7"><div class="loader"></div></td></tr>
+                    </tbody>
+                </table>
+                <div class="table-footer">
+                    <div class="pagination">
+                        <button id="prevPageBtn" onclick="changePage(-1)"><i class="fas fa-chevron-left"></i></button>
+                        <span id="pageInfo">Page 1</span>
+                        <button id="nextPageBtn" onclick="changePage(1)"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    <div id="resultsCount">0 résultat</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Détails Utilisateur (complet) -->
+    <div id="userModal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2>Détails du commissionnaire</h2>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- contenu dynamique -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast de notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="admin-dashboard.js"></script>
+</body>
+</html>

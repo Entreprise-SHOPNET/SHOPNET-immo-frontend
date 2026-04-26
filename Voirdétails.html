@@ -1,0 +1,57 @@
+
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>SHOPNET-IMMO | Détails du bien</title>
+  <link rel="stylesheet" href="Voirdétails.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+  <!-- Image de fond floue (appartement vue extérieure) -->
+  <div class="bg-blur"></div>
+
+  <div class="detail-container">
+    <!-- Bouton retour -->
+    <div class="top-bar">
+      <a href="dashboard-commissionnaire.html" class="back-btn"><i class="fas fa-arrow-left"></i> Retour</a>
+    </div>
+
+    <!-- Titre et message de performance -->
+    <div class="hero-text">
+      <h1 id="propertyTitle">Chargement...</h1>
+      <div id="performanceMessage" class="perf-msg"></div>
+    </div>
+
+    <!-- Cartes statistiques (sans fond blanc, juste du texte sur fond semi-transparent) -->
+    <div class="stats-row" id="statsRow">
+      <div class="stat-badge"><i class="fas fa-eye"></i> <span id="statViews">0</span> vues</div>
+      <div class="stat-badge"><i class="fab fa-whatsapp"></i> <span id="statWhatsapp">0</span> WhatsApp</div>
+      <div class="stat-badge"><i class="fas fa-phone-alt"></i> <span id="statAppels">0</span> appels</div>
+    </div>
+
+    <!-- Grille des infos (sans fond blanc) -->
+    <div class="info-grid" id="infoGrid">
+      <div class="loader">Chargement...</div>
+    </div>
+
+    <!-- Galerie photos -->
+    <div id="galleryBlock" style="display: none;">
+      <h3><i class="fas fa-images"></i> Photos</h3>
+      <div class="images-gallery" id="imagesGallery"></div>
+    </div>
+  </div>
+
+  <!-- Lightbox -->
+  <div id="lightbox" class="lightbox">
+    <span class="lightbox-close">&times;</span>
+    <img class="lightbox-img" id="lightboxImg" src="" alt="Agrandissement">
+  </div>
+
+  <script src="Voirdétails.js"></script>
+</body>
+</html>

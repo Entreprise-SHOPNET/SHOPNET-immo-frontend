@@ -1,0 +1,298 @@
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  background: url('https://images.pexels.com/photos/258154/pexels-photo-258154.jpeg?w=1600&auto=compress') center/cover no-repeat fixed;
+  position: relative;
+}
+
+/* Overlay très léger pour lisibilité */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(3px);
+  z-index: -1;
+}
+
+.container {
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* Brand fixe en haut lors du scroll */
+.brand-sticky {
+  position: sticky;
+  top: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  padding: 1rem 0;
+  margin: -2rem -1rem 1rem -1rem;
+  z-index: 10;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.brand {
+  text-align: center;
+}
+
+.brand h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.brand h1 span {
+  color: #7fbbd3;
+}
+
+.brand p {
+  color: rgba(255,255,255,0.9);
+  margin-top: 0.3rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Formulaire - sans fond, seulement les champs */
+.form-card {
+  background: transparent;
+  padding: 0;
+  border: none;
+}
+
+.step-indicator {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid rgba(255,255,255,0.3);
+  padding-bottom: 0.75rem;
+}
+
+.step {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.7);
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid transparent;
+  transition: 0.2s;
+}
+
+.step.active {
+  color: white;
+  border-bottom-color: white;
+}
+
+/* Groupes de champs - sans fond */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: white;
+  font-size: 0.9rem;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.form-group label i {
+  width: 20px;
+  color: #7fbbd3;
+}
+
+.form-group input, .form-group select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid rgba(255,255,255,0.3);
+  font-size: 0.95rem;
+  font-family: 'Inter', sans-serif;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border-radius: 0;
+  transition: 0.2s;
+}
+
+.form-group input:focus, .form-group select:focus {
+  outline: none;
+  border-color: #7fbbd3;
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.form-group input::placeholder {
+  color: rgba(255,255,255,0.5);
+}
+
+.error-message {
+  color: #ffb3b3;
+  font-size: 0.75rem;
+  margin-top: 4px;
+  display: none;
+}
+
+/* Zones de fichiers */
+.file-zone {
+  border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(0, 0, 0, 0.5);
+  padding: 1.2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.2s;
+  position: relative;
+}
+
+.file-zone:hover {
+  border-color: #7fbbd3;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.file-zone i {
+  font-size: 2rem;
+  color: #7fbbd3;
+  margin-bottom: 0.5rem;
+}
+
+.file-zone p, .file-zone span {
+  color: rgba(255,255,255,0.8);
+}
+
+.file-zone input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.file-preview {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: #7fbbd3;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 6px 10px;
+  display: inline-block;
+}
+
+/* Boutons */
+.button-group {
+  margin-top: 1rem;
+}
+
+.button-group.double {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.btn-next, .btn-prev, .btn-submit {
+  padding: 12px 20px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  border: none;
+  transition: 0.2s;
+}
+
+.btn-next {
+  background: #0f3b5f;
+  color: white;
+  width: 100%;
+}
+
+.btn-next:hover {
+  background: #1a4f76;
+}
+
+.btn-prev {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: white;
+}
+
+.btn-prev:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.btn-submit {
+  background: #0f3b5f;
+  color: white;
+  flex: 1;
+}
+
+.btn-submit:hover {
+  background: #1a4f76;
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 1.8rem;
+}
+
+.login-link a {
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-shadow: 0 1px 2px black;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}
+
+.message-box {
+  margin-top: 1.5rem;
+  padding: 12px;
+  text-align: center;
+  font-size: 0.9rem;
+  display: none;
+  background: rgba(0,0,0,0.7);
+}
+
+.message-box.success {
+  color: #a3e4c2;
+  border-left: 3px solid #2ecc71;
+  display: block;
+}
+
+.message-box.error {
+  color: #ffb3b3;
+  border-left: 3px solid #e74c3c;
+  display: block;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .container {
+    padding: 1rem;
+  }
+  .brand h1 {
+    font-size: 1.6rem;
+  }
+  .button-group.double {
+    flex-direction: column;
+  }
+  .btn-prev, .btn-submit {
+    width: 100%;
+  }
+}

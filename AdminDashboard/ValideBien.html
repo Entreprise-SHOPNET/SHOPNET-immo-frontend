@@ -1,0 +1,130 @@
+
+
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>SHOPNET-IMMO | Administration des biens</title>
+    <link rel="stylesheet" href="ValideBien.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="admin-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="admin-profile">
+                <img src="https://ui-avatars.com/api/?name=Admin&background=00182A&color=fff&size=100" alt="Admin">
+                <h3>Administrateur SHOPNET</h3>
+                <p>Gestion des biens</p>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li class="active" data-view="pending">
+                    <a onclick="switchView('pending')">
+                        <i class="fas fa-clock"></i>
+                        <span>En attente</span>
+                        <span id="pendingBadge" class="badge">0</span>
+                    </a>
+                </li>
+                <li data-view="approved">
+                    <a onclick="switchView('approved')">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Approuvés</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Déconnexion
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="main-header">
+            <div class="header-left">
+                <h1 id="pageTitle">Biens en attente</h1>
+                <p>Gestion des annonces immobilières</p>
+            </div>
+            <div class="stats-cards">
+                <div class="stat-card pending">
+                    <i class="fas fa-clock"></i>
+                    <div>
+                        <h3 id="statPending">0</h3>
+                        <p>En attente</p>
+                    </div>
+                </div>
+                <div class="stat-card approved">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <h3 id="statApproved">0</h3>
+                        <p>Approuvés</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Barre de recherche -->
+        <div class="filters-bar">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Rechercher par titre, ville, prix...">
+                <button onclick="filterBiens()"><i class="fas fa-search"></i></button>
+            </div>
+            <button class="refresh-btn" onclick="loadCurrentView()"><i class="fas fa-sync-alt"></i> Actualiser</button>
+        </div>
+
+        <!-- Tableau des biens -->
+        <div class="table-container">
+            <table class="biens-table">
+                <thead>
+                    <tr>
+                        <th>ID</th><th>Images</th><th>Titre</th><th>Prix</th><th>Ville</th><th>Type</th><th>Offre</th><th>Statut</th><th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="biensTableBody">
+                    <tr><td colspan="9"><div class="loader"></div></td></tr>
+                </tbody>
+            </table>
+            <div class="table-footer">
+                <div class="pagination">
+                    <button id="prevPageBtn" onclick="changePage(-1)"><i class="fas fa-chevron-left"></i></button>
+                    <span id="pageInfo">Page 1</span>
+                    <button id="nextPageBtn" onclick="changePage(1)"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <div id="resultsCount">0 résultat</div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Modal Détails -->
+<div id="bienModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Détails du bien</h2>
+            <button class="close-modal" onclick="closeModal()">&times;</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+    </div>
+</div>
+
+<!-- Lightbox pour agrandir les images -->
+<div id="lightbox" class="lightbox">
+    <span class="lightbox-close">&times;</span>
+    <img class="lightbox-img" id="lightboxImg" src="" alt="Agrandissement">
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast"></div>
+
+<script src="ValideBien.js"></script>
+</body>
+</html>

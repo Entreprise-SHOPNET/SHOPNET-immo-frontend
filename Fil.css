@@ -1,0 +1,280 @@
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #ffffff;
+  color: #1e1e2f;
+  line-height: 1.4;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* Header */
+.header {
+  background: white;
+  border-bottom: 1px solid #eef2f6;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 16px 0;
+}
+.header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.logo {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+.logo i {
+  color: #104ccf;
+  margin-right: 6px;
+}
+.logo span:first-child {
+  color: #0f172a;
+}
+.logo .accent {
+  color: #104ccf;
+}
+nav {
+  display: flex;
+  gap: 28px;
+}
+nav a {
+  text-decoration: none;
+  color: #334155;
+  font-weight: 500;
+  transition: 0.2s;
+}
+nav a.active, nav a:hover {
+  color: #104ccf;
+}
+
+/* Hero */
+.hero {
+  margin: 48px 0 32px;
+  text-align: center;
+}
+.hero h1 {
+  font-size: 2.8rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #104ccf, #2b6ef0);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  line-height: 1.2;
+}
+.hero p {
+  font-size: 1.05rem;
+  color: #475569;
+  max-width: 700px;
+  margin: 16px auto 0;
+}
+
+/* Filtres */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 48px;
+  justify-content: center;
+}
+.filter-group {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 48px;
+  padding: 8px 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.filter-group i {
+  color: #104ccf;
+  font-size: 0.9rem;
+}
+.filter-group input, .filter-group select {
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 6px 0;
+  outline: none;
+  min-width: 150px;
+}
+.filter-group select {
+  cursor: pointer;
+}
+
+/* ===== GRILLE HORIZONTALE RESPONSIVE ===== */
+.properties-grid {
+  display: grid;
+  gap: 28px;
+  margin-bottom: 60px;
+}
+
+/* Très grands écrans : 6 colonnes */
+@media (min-width: 1600px) {
+  .properties-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+/* Grands écrans : 5 colonnes (valeur par défaut dominante) */
+@media (min-width: 1200px) and (max-width: 1599px) {
+  .properties-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* Écrans moyens : 4 colonnes */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .properties-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Tablettes : 3 colonnes */
+@media (min-width: 768px) and (max-width: 991px) {
+  .properties-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Petits tablettes : 2 colonnes */
+@media (min-width: 481px) and (max-width: 767px) {
+  .properties-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Mobiles : 1 colonne */
+@media (max-width: 480px) {
+  .properties-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Carte */
+.property-card {
+  background: white;
+  border-radius: 20px;
+  border: 1px solid #eef2f6;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.25s ease, border-color 0.2s;
+}
+.property-card:hover {
+  transform: translateY(-5px);
+  border-color: #104ccf;
+}
+.card-img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  background: #f1f5f9;
+}
+.card-content {
+  padding: 14px 14px 18px;
+}
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card-price {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #104ccf;
+  margin-bottom: 8px;
+}
+.card-location {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.8rem;
+  color: #475569;
+  margin-bottom: 10px;
+}
+.card-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  background: #f8fafc;
+  padding: 6px 10px;
+  border-radius: 30px;
+  margin-top: 10px;
+}
+.meta-tag {
+  font-weight: 500;
+  color: #104ccf;
+}
+
+/* Loader & messages */
+.loader {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1rem;
+  color: #104ccf;
+}
+.error-message {
+  text-align: center;
+  padding: 2rem;
+  background: #fee2e2;
+  border-radius: 16px;
+  color: #b91c1c;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 28px 0;
+  border-top: 1px solid #eef2f6;
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
+/* Responsive ajustements */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 16px;
+  }
+  .hero h1 {
+    font-size: 2rem;
+  }
+  .filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .filter-group {
+    justify-content: space-between;
+  }
+  .filter-group input, .filter-group select {
+    width: 100%;
+  }
+  .properties-grid {
+    gap: 20px;
+  }
+  .card-img {
+    height: 180px;
+  }
+  .card-title {
+    white-space: normal;
+    font-size: 1rem;
+  }
+}
