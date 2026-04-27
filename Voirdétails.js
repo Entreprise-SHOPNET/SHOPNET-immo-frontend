@@ -1,115 +1,138 @@
 
 
-// Configuration
-const API_AGENT = 'https://shopnet-immo-backend.onrender.com/api/agent';
+
+// Configuration PRODUCTION (Render)
+const API_BASE = 'https://shopnet-immo-backend.onrender.com/api/agent';
+const ANALYTICS_BASE = 'https://shopnet-immo-backend.onrender.com/api/analytics';
 
 function getToken() {
   return localStorage.getItem('token');
 }
 
-async function fetchBienDetail(id) {
-  try {
-    const response = await fetch(`${API_AGENT}/my-biens`, {
-      headers: { 'Authorization': `Bearer ${getToken()}` }
-    });
-    if (!response.ok) throw new Error('Erreur chargement');
-    const data = await response.json();
-    if (data.success && data.biens) {
-      const bien = data.biens.find(b => b.id == id);
-      if (!bien) throw new Error('Bien non trouvé');
-      return bien;
-    } else {
-      throw new Error('Aucun bien trouvé');
+async function apiFetch(url, options = {}) {
+  const token = getToken();
+  if (!token) throw new Error('Non authentifié');
+  const res = await fetch(url, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+      ...options.headers
     }
-  } catch (err) {
-    console.error(err);
-    throw err;
+  });
+  if (!res.ok) {
+    let errMsg = `Erreur HTTP ${res.status}`;
+    try {
+      const err = await res.json();
+      errMsg = err.message || errMsg;
+    } catch(e) {}
+    throw new Error(errMsg);
   }
+  return res.json();
 }
 
-async function displayProperty() {
+function getBienId() {
   const params = new URLSearchParams(window.location.search);
-  const id = params.get('id');
-  if (!id) {
-    document.getElementById('detailsArea').innerHTML = '<div class="loader">❌ Aucun identifiant</div>';
+  return params.get('id');
+}
+
+async function loadBienDetails() {
+  const bienId = getBienId();
+  if (!bienId) {
+    document.getElementById('infoGrid').innerHTML = '<div class="error">ID manquant</div>';
     return;
   }
 
   try {
-    const bien = await fetchBienDetail(id);
-    renderProperty(bien);
+    const data = await apiFetch(`${API_BASE}/my-biens`);
+    if (!data.success) throw new Error(data.message);
+    const bien = data.biens.find(b => b.id == bienId);
+    if (!bien) throw new Error('Bien non trouvé');
+
+    let stats = { views: 0, whatsapp_clicks: 0, appels: 0 };
+    try {
+      const statsData = await apiFetch(`${ANALYTICS_BASE}/bien/${bienId}`);
+      if (statsData.success) stats = statsData.stats;
+    } catch(e) { console.warn('Stats indisponibles'); }
+
+    displayPage(bien, stats);
   } catch (err) {
-    document.getElementById('detailsArea').innerHTML = `<div class="loader">⚠️ ${err.message}</div>`;
+    document.getElementById('infoGrid').innerHTML = `<div class="error">${escapeHtml(err.message)}</div>`;
   }
 }
 
-function renderProperty(bien) {
-  // Titre
-  document.getElementById('propertyTitle').innerText = bien.titre || 'Sans titre';
+function displayPage(bien, stats) {
+  document.getElementById('propertyTitle').innerText = bien.titre || 'Bien immobilier';
+  const views = stats.views || 0;
+  const perfMsg = document.getElementById('performanceMessage');
+  if (views === 0) {
+    perfMsg.innerHTML = `📊 <strong>${escapeHtml(bien.titre || 'Ce bien')}</strong> n'a pas encore de vue. Partagez-le !`;
+  } else {
+    perfMsg.innerHTML = `🎉 <strong>${escapeHtml(bien.titre || 'Ce bien')}</strong> a été vu <strong>${views} fois</strong> ! ${views > 10 ? 'Excellent début !' : 'Continuez à le promouvoir !'}`;
+  }
 
-  // Préparation des données
-  const lieu = [bien.ville, bien.commune, bien.quartier].filter(Boolean).join(', ') || 'Non renseigné';
-  const typeOffre = bien.type_offre === 'Vente' ? 'Vente' : 'Location';
+  document.getElementById('statViews').innerText = views;
+  document.getElementById('statWhatsapp').innerText = stats.whatsapp_clicks || 0;
+  document.getElementById('statAppels').innerText = stats.appels || 0;
+
   const statusText = bien.status === 'approved' ? 'Approuvé' : (bien.status === 'pending' ? 'En attente' : 'Rejeté');
   const statusClass = bien.status;
+  const datePub = bien.created_at ? new Date(bien.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Non spécifiée';
 
-  const fields = [
-    { label: 'Type de bien', value: bien.type_bien || 'Non spécifié' },
-    { label: 'Offre', value: typeOffre },
-    { label: 'Prix', value: `${new Intl.NumberFormat().format(bien.prix)} ${bien.devise || 'USD'}` },
-    { label: 'Localisation', value: lieu },
-    { label: 'Superficie', value: bien.superficie ? `${bien.superficie} m²` : 'Non précisée' },
-    { label: 'Chambres', value: bien.chambres || 0 },
-    { label: 'Salles de bain', value: bien.salles_bain || 0 },
-    { label: 'Date d\'ajout', value: bien.created_at ? new Date(bien.created_at).toLocaleDateString() : 'Inconnue' },
-    { label: 'Statut', value: `<span class="status-badge ${statusClass}">${statusText}</span>` },
-    { label: 'Référence', value: bien.reference || '---' },
-    { label: 'Téléphone propriétaire', value: bien.telephone || 'Non communiqué' },
-    { label: 'WhatsApp propriétaire', value: bien.whatsapp || 'Non communiqué' }
-  ];
+  const infoHtml = `
+    <div class="info-cards">
+      <div class="info-item"><div class="info-label">Type de bien</div><div class="info-value">${bien.type_bien || '-'}</div></div>
+      <div class="info-item"><div class="info-label">Offre</div><div class="info-value">${bien.type_offre || '-'}</div></div>
+      <div class="info-item"><div class="info-label">Prix</div><div class="info-value">${bien.prix} ${bien.devise}</div></div>
+      <div class="info-item"><div class="info-label">Localisation</div><div class="info-value">${escapeHtml(bien.ville)} ${bien.commune ? ', '+bien.commune : ''} ${bien.quartier ? ', '+bien.quartier : ''}</div></div>
+      <div class="info-item"><div class="info-label">Superficie</div><div class="info-value">${bien.superficie || '-'}</div></div>
+      <div class="info-item"><div class="info-label">Chambres</div><div class="info-value">${bien.chambres || 0}</div></div>
+      <div class="info-item"><div class="info-label">Salles de bain</div><div class="info-value">${bien.salles_bain || 0}</div></div>
+      <div class="info-item"><div class="info-label">Statut</div><div class="info-value"><span class="status-badge ${statusClass}">${statusText}</span></div></div>
+      <div class="info-item"><div class="info-label">Date publication</div><div class="info-value">${datePub}</div></div>
+      <div class="info-item"><div class="info-label">Référence</div><div class="info-value">${escapeHtml(bien.reference) || '-'}</div></div>
+      <div class="info-item" style="grid-column:1/-1;"><div class="info-label">Description</div><div class="info-value">${escapeHtml(bien.description) || 'Aucune description'}</div></div>
+    </div>
+  `;
+  document.getElementById('infoGrid').innerHTML = infoHtml;
 
-  let html = '<div class="info-grid">';
-  fields.forEach(field => {
-    html += `
-      <div class="info-row">
-        <div class="info-label">${field.label}</div>
-        <div class="info-value">${field.value}</div>
-      </div>
-    `;
-  });
-  html += '</div>';
-  document.getElementById('detailsArea').innerHTML = html;
-
-  // Galerie
-  const galleryDiv = document.getElementById('galleryArea');
-  const galleryContainer = document.getElementById('gallery');
-  if (bien.images && bien.images.length > 0) {
-    galleryDiv.style.display = 'block';
-    galleryContainer.innerHTML = bien.images.map(img => `<img src="${img}" alt="Photo">`).join('');
-    // Lightbox
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightboxImg');
-    const closeBtn = document.querySelector('.close-lightbox');
-    document.querySelectorAll('#gallery img').forEach(img => {
-      img.addEventListener('click', () => {
-        lightbox.style.display = 'flex';
-        lightboxImg.src = img.src;
-      });
-    });
-    closeBtn.addEventListener('click', () => lightbox.style.display = 'none');
-    lightbox.addEventListener('click', (e) => {
-      if (e.target === lightbox) lightbox.style.display = 'none';
+  const images = bien.images || [];
+  const galleryBlock = document.getElementById('galleryBlock');
+  const galleryContainer = document.getElementById('imagesGallery');
+  if (images.length) {
+    galleryContainer.innerHTML = images.map(img => `<img src="${img}" class="gallery-img" data-src="${img}">`).join('');
+    galleryBlock.style.display = 'block';
+    document.querySelectorAll('.gallery-img').forEach(img => {
+      img.addEventListener('click', () => openLightbox(img.getAttribute('data-src')));
     });
   } else {
-    galleryDiv.style.display = 'none';
+    galleryBlock.style.display = 'none';
   }
 }
 
-// Vérification token
+function openLightbox(src) {
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lightboxImg');
+  lbImg.src = src;
+  lb.style.display = 'flex';
+}
+function closeLightbox() {
+  document.getElementById('lightbox').style.display = 'none';
+}
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : (m === '<' ? '&lt;' : '&gt;'));
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   if (!getToken()) {
+    alert('Session expirée');
     window.location.href = '/login.html';
     return;
   }
-  displayProperty();
+  loadBienDetails();
+  const lb = document.getElementById('lightbox');
+  lb.addEventListener('click', (e) => {
+    if (e.target === lb || e.target.classList.contains('lightbox-close')) closeLightbox();
+  });
 });
