@@ -19,64 +19,18 @@ body {
   padding: 0 16px;
 }
 
-/* ===== BANNIÈRE PROMO ===== */
-.promo-banner {
-  background: linear-gradient(135deg, #104ccf, #2b6ef0);
-  color: white;
-  padding: 12px 16px;
-  position: relative;
+/* ===== STICKY HEADER + FILTRES ===== */
+.sticky-top {
+  position: sticky;
+  top: 0;
   z-index: 20;
-}
-.promo-content {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  justify-content: space-between;
-}
-.promo-content i {
-  font-size: 1.8rem;
-}
-.promo-text {
-  flex: 1;
-  font-size: 0.8rem;
-}
-.promo-text strong {
-  font-size: 0.9rem;
-}
-.promo-btn {
   background: white;
-  color: #104ccf;
-  padding: 8px 16px;
-  border-radius: 40px;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 0.8rem;
-  transition: 0.2s;
-}
-.promo-btn:hover {
-  background: #f0f2f5;
-}
-.close-promo {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 1.5rem;
-  cursor: pointer;
-  padding: 0 6px;
-  opacity: 0.8;
-}
-.close-promo:hover {
-  opacity: 1;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 /* Header */
 .header {
   background: white;
-  border-bottom: 1px solid #eef2f6;
-  position: sticky;
-  top: 0;
-  z-index: 10;
   padding: 12px 0;
 }
 .header .container {
@@ -112,32 +66,15 @@ nav a.active, nav a:hover {
   color: #104ccf;
 }
 
-/* Hero */
-.hero {
-  margin: 32px 0 24px;
-  text-align: center;
-}
-.hero h1 {
-  font-size: 1.8rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, #104ccf, #2b6ef0);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-}
-.hero p {
-  font-size: 0.9rem;
-  color: #475569;
-  margin-top: 12px;
-}
-
-/* Filtres */
+/* Filtres – toujours visibles sous le header */
 .filters {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  margin-bottom: 32px;
-  justify-content: center;
+  padding: 12px 16px;
+  background: white;
+  border-top: 1px solid #eef2f6;
+  border-bottom: 1px solid #eef2f6;
 }
 .filter-group {
   background: #f8fafc;
@@ -148,7 +85,7 @@ nav a.active, nav a:hover {
   align-items: center;
   gap: 8px;
   flex: 1 1 auto;
-  min-width: 140px;
+  min-width: 130px;
 }
 .filter-group i {
   color: #104ccf;
@@ -166,85 +103,41 @@ nav a.active, nav a:hover {
   cursor: pointer;
 }
 
+/* Hero */
+.hero {
+  margin: 24px 0 20px;
+  text-align: center;
+}
+.hero h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #104ccf, #2b6ef0);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+.hero p {
+  font-size: 0.85rem;
+  color: #475569;
+  margin-top: 10px;
+}
+
 /* Sections */
 .section-title {
   font-size: 1.3rem;
   font-weight: 700;
-  margin-bottom: 16px;
-  padding-left: 4px;
+  margin: 20px 0 12px 4px;
 }
 
-/* Carrousel horizontal (3 cards) */
-.horizontal-scroll {
-  display: flex;
-  overflow-x: auto;
+/* GRILLE PRINCIPALE : 2 cartes sur mobile, 3 sur tablette/supérieur */
+.properties-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 16px;
-  scroll-snap-type: x mandatory;
-  padding-bottom: 12px;
   margin-bottom: 32px;
 }
-.horizontal-scroll::-webkit-scrollbar {
-  height: 4px;
-}
-.horizontal-scroll::-webkit-scrollbar-track {
-  background: #eef2f6;
-  border-radius: 4px;
-}
-.horizontal-scroll::-webkit-scrollbar-thumb {
-  background: #104ccf;
-  border-radius: 4px;
-}
-.featured-card {
-  flex: 0 0 280px;
-  scroll-snap-align: start;
-  background: white;
-  border-radius: 20px;
-  border: 1px solid #eef2f6;
-  overflow: hidden;
-  transition: 0.2s;
-}
-.featured-card:hover {
-  transform: translateY(-3px);
-  border-color: #104ccf;
-}
-.featured-card-img {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
-}
-.featured-card .card-content {
-  padding: 12px;
-}
-.featured-card .card-title {
-  font-size: 1rem;
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.featured-card .card-price {
-  font-size: 1rem;
-  color: #104ccf;
-  font-weight: 700;
-  margin: 4px 0;
-}
-.featured-card .card-location {
-  font-size: 0.7rem;
-  color: #475569;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
 
-/* Grille principale d'annonces */
-.properties-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  margin-bottom: 48px;
-}
-
-/* Carte standard (image en haut) */
+/* Carte unique (design compact) */
 .property-card {
   background: white;
   border-radius: 20px;
@@ -255,23 +148,27 @@ nav a.active, nav a:hover {
   position: relative;
 }
 .property-card:hover {
+  transform: translateY(-2px);
   border-color: #104ccf;
 }
 .card-img {
   width: 100%;
-  height: 200px;
+  height: 140px;
   object-fit: cover;
 }
 .card-content {
-  padding: 12px 14px 16px;
+  padding: 10px 10px 14px;
 }
 .card-title {
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 600;
   margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .card-price {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
   color: #104ccf;
 }
@@ -279,16 +176,16 @@ nav a.active, nav a:hover {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: #475569;
-  margin: 6px 0;
+  margin: 4px 0;
 }
 .card-meta {
   display: flex;
   justify-content: space-between;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   background: #f8fafc;
-  padding: 6px 10px;
+  padding: 5px 8px;
   border-radius: 30px;
   margin-top: 8px;
 }
@@ -297,71 +194,25 @@ nav a.active, nav a:hover {
   color: #104ccf;
 }
 
-/* Carte horizontale (image à droite, texte à gauche) */
-.property-card-horizontal {
-  display: flex;
-  background: white;
-  border-radius: 20px;
-  border: 1px solid #eef2f6;
-  overflow: hidden;
-  cursor: pointer;
-  transition: 0.2s;
-  position: relative;
-}
-.property-card-horizontal:hover {
-  border-color: #104ccf;
-}
-.card-img-horizontal {
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
-  order: 2; /* image à droite */
-}
-.card-content-horizontal {
-  flex: 1;
-  padding: 12px;
-  order: 1;
-}
-.card-title-horizontal {
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-.card-price-horizontal {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #104ccf;
-}
-.card-location-horizontal {
-  font-size: 0.7rem;
-  color: #475569;
-  margin: 6px 0;
-}
-.card-meta-horizontal {
-  display: flex;
-  gap: 12px;
-  font-size: 0.7rem;
-  margin-top: 6px;
-}
-
-/* Cœur favori */
+/* Bouton favori (cœur) */
 .favorite-btn {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 8px;
+  right: 8px;
   background: rgba(255,255,255,0.9);
   border-radius: 50%;
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   z-index: 2;
   transition: 0.2s;
+  backdrop-filter: blur(2px);
 }
 .favorite-btn i {
-  font-size: 1.2rem;
+  font-size: 1rem;
   color: #cbd5e1;
 }
 .favorite-btn.active i {
@@ -372,18 +223,22 @@ nav a.active, nav a:hover {
 }
 
 /* Loader & messages */
-.loader, .error-message {
+.loader, .error-message, .empty-message {
   text-align: center;
   padding: 2rem;
   color: #104ccf;
+  grid-column: 1 / -1;
 }
 .error-message {
   background: #fee2e2;
   color: #b91c1c;
   border-radius: 16px;
 }
+.empty-message {
+  color: #64748b;
+}
 
-/* Footer */
+/* Footer – style mobile */
 .footer {
   background: #f8fafc;
   border-top: 1px solid #eef2f6;
@@ -411,6 +266,9 @@ nav a.active, nav a:hover {
   margin-bottom: 12px;
   color: #0f172a;
 }
+.footer-col.entreprise-col h4 {
+  color: #0a2f6c; /* Bleu foncé pour la section Entreprise */
+}
 .footer-col ul {
   list-style: none;
 }
@@ -437,34 +295,24 @@ nav a.active, nav a:hover {
   margin-bottom: 8px;
 }
 
-/* Responsive : Mobile first */
-@media (min-width: 768px) {
-  .container {
-    padding: 0 24px;
-  }
-  .hero h1 {
-    font-size: 2.2rem;
-  }
+/* Responsive : passage à 3 colonnes sur tablette+ */
+@media (min-width: 600px) {
   .properties-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
   }
-  .property-card-horizontal {
-    flex-direction: column;
-  }
-  .card-img-horizontal {
-    width: 100%;
-    height: 180px;
-    order: 0;
-  }
-  .card-content-horizontal {
-    order: 0;
+  .card-img {
+    height: 160px;
   }
 }
 
 @media (min-width: 1024px) {
-  .properties-grid {
-    grid-template-columns: repeat(3, 1fr);
+  .container {
+    padding: 0 24px;
+  }
+  .hero h1 {
+    font-size: 2rem;
+  }
+  .card-img {
+    height: 180px;
   }
 }

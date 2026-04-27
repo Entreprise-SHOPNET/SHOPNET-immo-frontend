@@ -13,39 +13,22 @@
 </head>
 <body>
 
-  <!-- Bannière publicitaire fermable -->
-  <div id="promoBanner" class="promo-banner">
-    <div class="promo-content">
-      <i class="fas fa-download"></i>
-      <div class="promo-text">
-        <strong>📱 Téléchargez l'application</strong><br>
-        Accédez facilement et rapidement à SHOPNET
+  <!-- En-tête + filtres : fixés ensemble en haut -->
+  <div class="sticky-top">
+    <header class="header">
+      <div class="container">
+        <div class="logo">
+          <i class="fas fa-building"></i>
+          <span>SHOPNET</span><span class="accent">IMMO</span>
+        </div>
+        <nav>
+          <a href="#" class="active">Accueil</a>
+          <a href="#">Acheter</a>
+          <a href="#">Louer</a>
+          <a href="#">Contact</a>
+        </nav>
       </div>
-      <a href="https://play.google.com/store/apps/details?id=com.shopai.app" target="_blank" class="promo-btn">Utilisez l'app</a>
-      <button id="closePromo" class="close-promo">&times;</button>
-    </div>
-  </div>
-
-  <header class="header">
-    <div class="container">
-      <div class="logo">
-        <i class="fas fa-building"></i>
-        <span>SHOPNET</span><span class="accent">IMMO</span>
-      </div>
-      <nav>
-        <a href="#" class="active">Accueil</a>
-        <a href="#">Acheter</a>
-        <a href="#">Louer</a>
-        <a href="#">Contact</a>
-      </nav>
-    </div>
-  </header>
-
-  <main class="main container">
-    <div class="hero">
-      <h1>Trouvez le bien qui vous correspond 💖</h1>
-      <p>Appartements, villas et espaces professionnels sélectionnés pour vous.<br>Découvrez les meilleures opportunités immobilières à Lubumbashi et partout en RDC.</p>
-    </div>
+    </header>
 
     <div class="filters">
       <div class="filter-group">
@@ -71,19 +54,26 @@
         </select>
       </div>
     </div>
+  </div>
 
-    <!-- Carrousel horizontal : 3 annonces en avant -->
+  <main class="main container">
+    <div class="hero">
+      <h1>Trouvez le bien qui vous correspond 💖</h1>
+      <p>Appartements, villas et espaces professionnels sélectionnés pour vous.<br>Découvrez les meilleures opportunités immobilières à Lubumbashi et partout en RDC.</p>
+    </div>
+
+    <!-- Section Coups de cœur (max 3 premiers biens) -->
     <section class="featured-section">
-      <h2 class="section-title">✨ Coups de cœur</h2>
-      <div class="horizontal-scroll" id="featuredScroll">
+      <h2 class="section-title">✨ Coups de cœur voyageurs</h2>
+      <div id="featuredGrid" class="properties-grid">
         <div class="loader">Chargement...</div>
       </div>
     </section>
 
-    <!-- Grille principale d'annonces (cartes alternées) -->
-    <section class="properties-section">
-      <h2 class="section-title">🏠 Découvrez nos annonces</h2>
-      <div class="properties-grid" id="propertiesGrid">
+    <!-- Section Tous les biens (reste des annonces) -->
+    <section class="all-properties-section">
+      <h2 class="section-title">🏠 Toutes nos annonces</h2>
+      <div id="allPropertiesGrid" class="properties-grid">
         <div class="loader">Chargement des annonces...</div>
       </div>
     </section>
@@ -116,7 +106,7 @@
             <li><a href="#">Réserver un bien</a></li>
           </ul>
         </div>
-        <div class="footer-col">
+        <div class="footer-col entreprise-col">
           <h4>Entreprise</h4>
           <ul>
             <li><a href="#">Infos sur l'entreprise</a></li>

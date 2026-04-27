@@ -7,8 +7,8 @@ let allProperties = [];
 let filteredProperties = [];
 
 // Éléments DOM
-const grid = document.getElementById('propertiesGrid');
-const featuredScroll = document.getElementById('featuredScroll');
+const featuredGrid = document.getElementById('featuredGrid');
+const allPropertiesGrid = document.getElementById('allPropertiesGrid');
 const searchCity = document.getElementById('searchCity');
 const filterType = document.getElementById('filterType');
 const filterOffer = document.getElementById('filterOffer');
@@ -32,8 +32,7 @@ function toggleFavorite(id, event) {
     favorites.push(id);
   }
   saveFavorites();
-  // Rafraîchir l'affichage pour mettre à jour les cœurs
-  applyFilters();
+  applyFilters(); // rafraîchit l'affichage
 }
 
 // Chargement initial
@@ -42,20 +41,11 @@ document.addEventListener('DOMContentLoaded', () => {
   searchCity.addEventListener('input', applyFilters);
   filterType.addEventListener('change', applyFilters);
   filterOffer.addEventListener('change', applyFilters);
-
-  // Fermeture de la bannière promo
-  const closeBtn = document.getElementById('closePromo');
-  const banner = document.getElementById('promoBanner');
-  if (closeBtn && banner) {
-    closeBtn.addEventListener('click', () => {
-      banner.style.display = 'none';
-    });
-  }
 });
 
 async function fetchProperties() {
-  grid.innerHTML = '<div class="loader">📡 Chargement des annonces...</div>';
-  featuredScroll.innerHTML = '<div class="loader">📡 Chargement...</div>';
+  featuredGrid.innerHTML = '<div class="loader">📡 Chargement coups de cœur...</div>';
+  allPropertiesGrid.innerHTML = '<div class="loader">📡 Chargement annonces...</div>';
   try {
     const response = await fetch(API_URL);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -71,8 +61,8 @@ async function fetchProperties() {
     }
   } catch (err) {
     console.error(err);
-    grid.innerHTML = `<div class="error-message">⚠️ Erreur : ${err.message}. Vérifiez votre connexion.</div>`;
-    featuredScroll.innerHTML = '';
+    featuredGrid.innerHTML = `<div class="error-message">⚠️ Erreur : ${err.message}. Vérifiez votre connexion.</div>`;
+    allPropertiesGrid.innerHTML = '';
   }
 }
 
@@ -92,70 +82,41 @@ function applyFilters() {
     return true;
   });
 
-  renderFeatured(); // 3 premières annonces en carrousel
-  renderGrid();
+  // Séparer les 3 premiers pour les "Coups de cœur", le reste pour la grille générale
+  const featuredItems = filteredProperties.slice(0, 3);
+  const restItems = filteredProperties.slice(3);
+
+  renderGrid(featuredGrid, featuredItems, true);
+  renderGrid(allPropertiesGrid, restItems, false);
 }
 
-// Carrousel horizontal : 3 premières annonces (ou les 3 premières filtrées)
-function renderFeatured() {
-  const featured = filteredProperties.slice(0, 3);
-  if (!featured.length) {
-    featuredScroll.innerHTML = '<div class="loader">Aucune annence à la une</div>';
-    return;
-  }
-  featuredScroll.innerHTML = featured.map(prop => createFeaturedCard(prop)).join('');
-  attachFavoriteEvents();
-}
+// Rendu générique d'une grille (avec un message si vide)
+function renderGrid(container, properties, isFeatured) {
+  if (!container) return;
 
-function createFeaturedCard(prop) {
-  const imageUrl = prop.images[0];
-  const priceFormatted = new Intl.NumberFormat().format(prop.prix);
-  const lieu = [prop.ville, prop.quartier].filter(Boolean).join(', ') || 'RDC';
-  const favClass = isFavorite(prop.id) ? 'active' : '';
-  return `
-    <div class="featured-card" data-id="${prop.id}">
-      <img class="featured-card-img" src="${imageUrl}" alt="${prop.titre}" loading="lazy" onerror="this.src='https://placehold.co/600x400?text=Image+indisponible'">
-      <div class="card-content">
-        <h3 class="card-title">${escapeHtml(prop.titre)}</h3>
-        <div class="card-price">${priceFormatted} ${prop.devise}</div>
-        <div class="card-location"><i class="fas fa-map-pin"></i> ${escapeHtml(lieu)}</div>
-      </div>
-      <div class="favorite-btn ${favClass}" data-id="${prop.id}">
-        <i class="fas fa-heart"></i>
-      </div>
-    </div>
-  `;
-}
-
-// Grille principale : alterne les styles (classique / horizontal)
-function renderGrid() {
-  if (!filteredProperties.length) {
-    grid.innerHTML = '<div class="loader">🏡 Aucun bien ne correspond à vos critères.</div>';
+  if (properties.length === 0) {
+    container.innerHTML = '<div class="empty-message">✨ Aucun bien à afficher dans cette section.</div>';
     return;
   }
 
   let html = '';
-  filteredProperties.forEach((prop, index) => {
-    // Alterne : index pair -> carte classique, index impair -> carte horizontale
-    if (index % 2 === 0) {
-      html += createClassicCard(prop);
-    } else {
-      html += createHorizontalCard(prop);
-    }
+  properties.forEach(prop => {
+    html += createPropertyCard(prop);
   });
-  grid.innerHTML = html;
-  attachCardClickEvents();
-  attachFavoriteEvents();
+  container.innerHTML = html;
+  attachCardClickEvents(container);
+  attachFavoriteEvents(container);
 }
 
-function createClassicCard(prop) {
+// Création d'une carte unique (compacte, adaptée à grille 2/3 colonnes)
+function createPropertyCard(prop) {
   const imageUrl = prop.images[0];
   const priceFormatted = new Intl.NumberFormat().format(prop.prix);
   const lieu = [prop.ville, prop.quartier].filter(Boolean).join(', ') || 'RDC';
   const favClass = isFavorite(prop.id) ? 'active' : '';
   return `
     <div class="property-card" data-id="${prop.id}">
-      <img class="card-img" src="${imageUrl}" alt="${prop.titre}" loading="lazy" onerror="this.src='https://placehold.co/600x400?text=Image+indisponible'">
+      <img class="card-img" src="${imageUrl}" alt="${escapeHtml(prop.titre)}" loading="lazy" onerror="this.src='https://placehold.co/600x400?text=Image+indisponible'">
       <div class="card-content">
         <h3 class="card-title">${escapeHtml(prop.titre)}</h3>
         <div class="card-price">${priceFormatted} ${prop.devise}</div>
@@ -172,34 +133,10 @@ function createClassicCard(prop) {
   `;
 }
 
-function createHorizontalCard(prop) {
-  const imageUrl = prop.images[0];
-  const priceFormatted = new Intl.NumberFormat().format(prop.prix);
-  const lieu = [prop.ville, prop.quartier].filter(Boolean).join(', ') || 'RDC';
-  const favClass = isFavorite(prop.id) ? 'active' : '';
-  return `
-    <div class="property-card-horizontal" data-id="${prop.id}">
-      <img class="card-img-horizontal" src="${imageUrl}" alt="${prop.titre}" loading="lazy" onerror="this.src='https://placehold.co/600x400?text=Image+indisponible'">
-      <div class="card-content-horizontal">
-        <h3 class="card-title-horizontal">${escapeHtml(prop.titre)}</h3>
-        <div class="card-price-horizontal">${priceFormatted} ${prop.devise}</div>
-        <div class="card-location-horizontal"><i class="fas fa-map-pin"></i> ${escapeHtml(lieu)}</div>
-        <div class="card-meta-horizontal">
-          <span>${prop.type_bien || 'Bien'}</span>
-          <span class="meta-tag">${prop.type_offre === 'Vente' ? '🏷️ Vente' : '🔑 Location'}</span>
-        </div>
-      </div>
-      <div class="favorite-btn ${favClass}" data-id="${prop.id}">
-        <i class="fas fa-heart"></i>
-      </div>
-    </div>
-  `;
-}
-
-function attachCardClickEvents() {
-  document.querySelectorAll('.property-card, .property-card-horizontal, .featured-card').forEach(card => {
+// Gestion du clic sur une carte (redirection vers détail)
+function attachCardClickEvents(container) {
+  container.querySelectorAll('.property-card').forEach(card => {
     card.addEventListener('click', (e) => {
-      // Ne pas déclencher si on clique sur le cœur
       if (e.target.closest('.favorite-btn')) return;
       const id = card.dataset.id;
       if (id) window.location.href = `detail.html?id=${id}`;
@@ -207,8 +144,9 @@ function attachCardClickEvents() {
   });
 }
 
-function attachFavoriteEvents() {
-  document.querySelectorAll('.favorite-btn').forEach(btn => {
+// Gestion des favoris pour les cartes d'un conteneur
+function attachFavoriteEvents(container) {
+  container.querySelectorAll('.favorite-btn').forEach(btn => {
     btn.removeEventListener('click', handleFavoriteClick);
     btn.addEventListener('click', handleFavoriteClick);
   });
@@ -220,7 +158,6 @@ function handleFavoriteClick(e) {
   const id = parseInt(btn.dataset.id);
   if (!id) return;
   toggleFavorite(id, e);
-  // Mettre à jour visuellement
   if (isFavorite(id)) {
     btn.classList.add('active');
   } else {
