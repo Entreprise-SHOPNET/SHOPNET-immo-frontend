@@ -37,7 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
   filterType.addEventListener('change', applyFilters);
   filterOffer.addEventListener('change', applyFilters);
 
-  // Fermeture de la bannière Play Store
   const closePromo = document.getElementById('closePromoStore');
   const promoBanner = document.getElementById('promoStore');
   if (closePromo && promoBanner) {
@@ -96,7 +95,7 @@ function applyFilters() {
 function renderGrid(container, properties) {
   if (!container) return;
   if (!properties.length) {
-    container.innerHTML = '';  // aucun message "aucun bien" – grille vide
+    container.innerHTML = '';  // pas de message "aucun bien"
     return;
   }
 
@@ -172,3 +171,5 @@ function escapeHtml(str) {
     return m;
   });
 }
+
+

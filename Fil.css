@@ -11,7 +11,7 @@ body {
   background: #ffffff;
   color: #1e1e2f;
   line-height: 1.4;
-  overflow-x: hidden; /* Évite tout défilement horizontal parasite */
+  overflow-x: hidden;
 }
 
 .container {
@@ -81,7 +81,7 @@ body {
 
 .header {
   background: white;
-  padding: 8px 0; /* réduction de la hauteur */
+  padding: 8px 0;
 }
 .header .container {
   display: flex;
@@ -89,7 +89,7 @@ body {
   align-items: center;
 }
 .logo {
-  font-size: 1.2rem; /* taille réduite */
+  font-size: 1.2rem;
   font-weight: 700;
 }
 .logo i {
@@ -152,12 +152,12 @@ nav a.active, nav a:hover {
   width: 100%;
 }
 
-/* Hero : aligné à droite */
-.hero-right {
-  text-align: right;
+/* Hero : aligné à GAUCHE */
+.hero-left {
+  text-align: left;
   margin: 20px 0 20px;
 }
-.hero-right h1 {
+.hero-left h1 {
   font-size: 1.5rem;
   font-weight: 700;
   background: linear-gradient(135deg, #104ccf, #2b6ef0);
@@ -165,7 +165,7 @@ nav a.active, nav a:hover {
   -webkit-background-clip: text;
   color: transparent;
 }
-.hero-right p {
+.hero-left p {
   font-size: 0.8rem;
   color: #475569;
   margin-top: 8px;
@@ -310,7 +310,7 @@ nav a.active, nav a:hover {
   color: #0f172a;
 }
 .footer-col.entreprise-col h4 {
-  color: #0a2f6c; /* Bleu foncé pour Entreprise */
+  color: #0a2f6c; /* Bleu foncé */
 }
 .footer-col ul {
   list-style: none;
