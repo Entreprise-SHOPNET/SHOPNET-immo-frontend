@@ -23,27 +23,27 @@
             </div>
             <nav class="sidebar-nav">
                 <ul>
-                    <li class="active" data-filter="all">
-                        <a href="#" onclick="filterByStatus('all')">
+                    <li class="active" data-status="all">
+                        <a href="#" onclick="filterByStatus('all'); return false;">
                             <i class="fas fa-users"></i>
                             <span>Tous les comptes</span>
                         </a>
                     </li>
-                    <li data-filter="PENDING">
-                        <a href="#" onclick="filterByStatus('PENDING')">
+                    <li data-status="PENDING">
+                        <a href="#" onclick="filterByStatus('PENDING'); return false;">
                             <i class="fas fa-clock"></i>
                             <span>En attente</span>
                             <span id="pending-count" class="badge">0</span>
                         </a>
                     </li>
-                    <li data-filter="ACTIVE">
-                        <a href="#" onclick="filterByStatus('ACTIVE')">
+                    <li data-status="ACTIVE">
+                        <a href="#" onclick="filterByStatus('ACTIVE'); return false;">
                             <i class="fas fa-check-circle"></i>
                             <span>Actifs</span>
                         </a>
                     </li>
-                    <li data-filter="REJECTED">
-                        <a href="#" onclick="filterByStatus('REJECTED')">
+                    <li data-status="REJECTED">
+                        <a href="#" onclick="filterByStatus('REJECTED'); return false;">
                             <i class="fas fa-times-circle"></i>
                             <span>Rejetés</span>
                         </a>
@@ -132,7 +132,7 @@
         </main>
     </div>
 
-    <!-- Modal Détails Utilisateur (complet) -->
+    <!-- Modal Détails Utilisateur (commissionnaire) -->
     <div id="userModal" class="modal">
         <div class="modal-content modal-large">
             <div class="modal-header">

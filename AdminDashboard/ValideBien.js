@@ -1,5 +1,6 @@
 
 // Configuration PRODUCTION (Render)
+// Configuration PRODUCTION (Render)
 const API_BASE = 'https://shopnet-immo-backend.onrender.com/api/admin/biens';
 
 // État global

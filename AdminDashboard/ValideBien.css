@@ -96,6 +96,9 @@ body {
     margin-top: auto;
     padding: 20px;
     border-top: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .logout-btn {
@@ -112,6 +115,27 @@ body {
 
 .logout-btn:hover {
     background: rgba(244,67,54,0.3);
+}
+
+/* NOUVEAU BOUTON : Tableau de bord */
+.dashboard-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    background: rgba(66,165,245,0.2);
+    border: 1px solid rgba(66,165,245,0.5);
+    color: #42A5F5;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+    text-decoration: none;
+}
+.dashboard-btn:hover {
+    background: rgba(66,165,245,0.3);
 }
 
 /* Main content */

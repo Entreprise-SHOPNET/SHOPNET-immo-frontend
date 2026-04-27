@@ -1,17 +1,18 @@
 
 
 // Configuration API
-// Configuration PRODUCTION (Render)
-const API_BASE = 'https://shopnet-immo-backend.onrender.com/api/admin/biens';
+// Configuration
+// Configuration API
+const API_BASE = 'https://shopnet-immo-backend.onrender.com/api/admin';
 
 // État global
-let currentView = 'pending';     // 'pending' ou 'approved'
-let allBiens = [];
-let filteredBiens = [];
+let allUsers = [];
+let filteredUsers = [];
+let currentStatus = 'all';
 let currentPage = 1;
 const itemsPerPage = 10;
 
-// Helper: récupérer le token JWT (stocké après login)
+// Helper: récupérer le token JWT
 function getToken() {
     return localStorage.getItem('token');
 }
@@ -41,139 +42,146 @@ async function apiFetch(url, options = {}) {
     return response.json();
 }
 
-// Charger les biens selon la vue courante
-async function loadBiens() {
+// Charger la liste complète des commissionnaires + stats
+async function loadAllUsers() {
     try {
-        let url;
-        if (currentView === 'pending') {
-            url = `${API_BASE}/pending`;
-        } else {
-            url = `${API_BASE}/approved`;
-        }
-        const data = await apiFetch(url);
+        const data = await apiFetch(`${API_BASE}/commissionnaires`);
         if (data.success) {
-            allBiens = (data.biens || []).map(bien => {
-                let images = [];
-                try {
-                    if (bien.images) {
-                        images = typeof bien.images === 'string' ? JSON.parse(bien.images) : bien.images;
-                    }
-                } catch(e) { images = []; }
-                return { ...bien, images };
-            });
-            updateStats();
-            filterBiens();
+            allUsers = data.users || [];
+            // Mise à jour des stats
+            const stats = data.stats || { pending: 0, active: 0, rejected: 0 };
+            document.getElementById('stat-pending').innerText = stats.pending;
+            document.getElementById('stat-active').innerText = stats.active;
+            document.getElementById('stat-rejected').innerText = stats.rejected;
+            document.getElementById('pending-count').innerText = stats.pending;
+            
+            applyFiltersAndRender();
         } else {
             showToast(data.message || 'Erreur de chargement', 'error');
-            allBiens = [];
-            filterBiens();
+            allUsers = [];
+            applyFiltersAndRender();
         }
     } catch (err) {
         console.error(err);
         showToast(err.message || 'Erreur réseau', 'error');
-        allBiens = [];
-        filterBiens();
         if (err.message.includes('401') || err.message.includes('Non authentifié')) {
             localStorage.removeItem('token');
             window.location.href = '/login.html';
         }
+        allUsers = [];
+        applyFiltersAndRender();
     }
 }
 
-// Mettre à jour les compteurs
-async function updateStats() {
-    if (currentView === 'pending') {
-        document.getElementById('statPending').innerText = allBiens.length;
-        document.getElementById('pendingBadge').innerText = allBiens.length;
-        try {
-            const data = await apiFetch(`${API_BASE}/approved`);
-            if (data.success) {
-                document.getElementById('statApproved').innerText = data.count || data.biens?.length || 0;
-            }
-        } catch(e) {}
-    } else {
-        document.getElementById('statApproved').innerText = allBiens.length;
-        try {
-            const data = await apiFetch(`${API_BASE}/pending`);
-            if (data.success) {
-                document.getElementById('statPending').innerText = data.count || data.biens?.length || 0;
-                document.getElementById('pendingBadge').innerText = data.count || data.biens?.length || 0;
-            }
-        } catch(e) {}
+// Appliquer les filtres (statut, recherche, période) et rafraîchir l'affichage
+function applyFiltersAndRender() {
+    // 1. Filtre par statut
+    let filtered = [...allUsers];
+    if (currentStatus !== 'all') {
+        filtered = filtered.filter(u => u.status === currentStatus);
     }
-}
-
-// Filtrer par recherche
-function filterBiens() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    filteredBiens = allBiens.filter(bien => {
-        return (bien.titre && bien.titre.toLowerCase().includes(searchTerm)) ||
-               (bien.ville && bien.ville.toLowerCase().includes(searchTerm)) ||
-               (bien.prix && bien.prix.toString().includes(searchTerm)) ||
-               (bien.type_bien && bien.type_bien.toLowerCase().includes(searchTerm));
-    });
+    
+    // 2. Recherche textuelle (nom_complet, telephone, email)
+    const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+    if (searchTerm) {
+        filtered = filtered.filter(u => 
+            (u.nom_complet && u.nom_complet.toLowerCase().includes(searchTerm)) ||
+            (u.telephone && u.telephone.includes(searchTerm)) ||
+            (u.email && u.email.toLowerCase().includes(searchTerm))
+        );
+    }
+    
+    // 3. Filtre par période (created_at)
+    const period = document.getElementById('periodFilter').value;
+    if (period !== 'all') {
+        const now = new Date();
+        let startDate;
+        if (period === 'today') {
+            startDate = new Date(now.setHours(0,0,0,0));
+        } else if (period === 'week') {
+            startDate = new Date(now.setDate(now.getDate() - 7));
+        } else if (period === 'month') {
+            startDate = new Date(now.setMonth(now.getMonth() - 1));
+        }
+        filtered = filtered.filter(u => {
+            if (!u.created_at) return false;
+            const created = new Date(u.created_at);
+            return created >= startDate;
+        });
+    }
+    
+    filteredUsers = filtered;
     currentPage = 1;
     renderTable();
 }
 
-// Affichage du tableau
+// Affichage du tableau avec pagination
 function renderTable() {
-    const tbody = document.getElementById('biensTableBody');
+    const tbody = document.getElementById('usersTableBody');
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    const pageBiens = filteredBiens.slice(start, end);
-
-    if (pageBiens.length === 0) {
-        tbody.innerHTML = '<td><td colspan="9">Aucun bien trouvé</td></tr>';
+    const pageUsers = filteredUsers.slice(start, end);
+    
+    if (pageUsers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7">Aucun commissionnaire trouvé</td></tr>';
     } else {
-        tbody.innerHTML = pageBiens.map(bien => renderBienRow(bien)).join('');
+        tbody.innerHTML = pageUsers.map(user => renderUserRow(user)).join('');
     }
-
-    const totalPages = Math.max(1, Math.ceil(filteredBiens.length / itemsPerPage));
-    document.getElementById('resultsCount').innerText = `${filteredBiens.length} bien(s)`;
+    
+    const totalPages = Math.max(1, Math.ceil(filteredUsers.length / itemsPerPage));
+    document.getElementById('resultsCount').innerText = `${filteredUsers.length} commissionnaire(s)`;
     document.getElementById('pageInfo').innerText = `Page ${currentPage} / ${totalPages}`;
-    document.getElementById('prevPageBtn').disabled = (currentPage === 1);
-    document.getElementById('nextPageBtn').disabled = (currentPage === totalPages);
+    const prevBtn = document.getElementById('prevPageBtn');
+    const nextBtn = document.getElementById('nextPageBtn');
+    if (prevBtn) prevBtn.disabled = (currentPage === 1);
+    if (nextBtn) nextBtn.disabled = (currentPage === totalPages);
 }
 
-function renderBienRow(bien) {
-    const firstImage = (bien.images && bien.images.length > 0) ? bien.images[0] : '';
-    const thumbnail = firstImage 
-        ? `<img src="${firstImage}" class="thumbnail" alt="image" onclick="openLightbox('${firstImage}')">`
-        : '<i class="fas fa-image" style="font-size: 30px; color:#cbd5e1;"></i>';
-    const statusClass = bien.status === 'pending' ? 'status-pending' : 'status-approved';
-    const statusText = bien.status === 'pending' ? 'En attente' : 'Approuvé';
-
+// Générer une ligne du tableau
+function renderUserRow(user) {
+    const fullName = user.nom_complet || 'N/A';
+    const phone = user.telephone || '-';
+    const email = user.email || '-';
+    const status = user.status || 'PENDING';
+    const statusClass = `status-${status}`;
+    const statusText = status === 'PENDING' ? 'En attente' : (status === 'ACTIVE' ? 'Actif' : 'Rejeté');
+    const date = user.created_at ? new Date(user.created_at).toLocaleDateString() : '-';
+    
     let actions = '';
-    if (currentView === 'pending') {
+    if (status === 'PENDING') {
         actions = `
-            <button class="action-btn btn-view" onclick="viewBien(${bien.id})"><i class="fas fa-eye"></i> Voir</button>
-            <button class="action-btn btn-approve" onclick="approveBien(${bien.id})"><i class="fas fa-check"></i> Approuver</button>
-            <button class="action-btn btn-reject" onclick="rejectBien(${bien.id})"><i class="fas fa-trash"></i> Rejeter</button>
+            <button class="action-btn btn-view" onclick="viewUser(${user.id})"><i class="fas fa-eye"></i> Voir</button>
+            <button class="action-btn btn-validate" onclick="approveUser(${user.id})"><i class="fas fa-check"></i> Approuver</button>
+            <button class="action-btn btn-reject" onclick="rejectUser(${user.id})"><i class="fas fa-times"></i> Rejeter</button>
         `;
-    } else {
+    } else if (status === 'ACTIVE') {
         actions = `
-            <button class="action-btn btn-view" onclick="viewBien(${bien.id})"><i class="fas fa-eye"></i> Voir</button>
-            <button class="action-btn btn-delete" onclick="rejectBien(${bien.id})"><i class="fas fa-trash-alt"></i> Supprimer</button>
+            <button class="action-btn btn-view" onclick="viewUser(${user.id})"><i class="fas fa-eye"></i> Voir</button>
+            <button class="action-btn btn-reject" onclick="rejectUser(${user.id})"><i class="fas fa-trash"></i> Désactiver</button>
+            <button class="action-btn btn-delete" onclick="deleteUser(${user.id})"><i class="fas fa-trash-alt"></i> Supprimer</button>
+        `;
+    } else { // REJECTED
+        actions = `
+            <button class="action-btn btn-view" onclick="viewUser(${user.id})"><i class="fas fa-eye"></i> Voir</button>
+            <button class="action-btn btn-validate" onclick="approveUser(${user.id})"><i class="fas fa-undo"></i> Réactiver</button>
+            <button class="action-btn btn-delete" onclick="deleteUser(${user.id})"><i class="fas fa-trash-alt"></i> Supprimer</button>
         `;
     }
-
+    
     return `
         <tr>
-            <td>${bien.id}</td>
-            <td>${thumbnail}</td>
-            <td>${escapeHtml(bien.titre || 'Sans titre')}</td>
-            <td>${bien.prix} ${bien.devise || 'USD'}</td>
-            <td>${escapeHtml(bien.ville || '-')}</td>
-            <td>${bien.type_bien || '-'}</td>
-            <td>${bien.type_offre || '-'}</td>
+            <td>${user.id}</td>
+            <td>${escapeHtml(fullName)}</td>
+            <td>${escapeHtml(phone)}</td>
+            <td>${escapeHtml(email)}</td>
             <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+            <td>${date}</td>
             <td class="actions-cell">${actions}</td>
         </tr>
     `;
 }
 
-// Utilitaires
+// Échapper les caractères HTML
 function escapeHtml(str) {
     if (!str) return '';
     return str.replace(/[&<>]/g, function(m) {
@@ -184,23 +192,24 @@ function escapeHtml(str) {
     });
 }
 
+// Pagination
 function changePage(delta) {
     const newPage = currentPage + delta;
-    const maxPage = Math.ceil(filteredBiens.length / itemsPerPage);
+    const maxPage = Math.ceil(filteredUsers.length / itemsPerPage);
     if (newPage >= 1 && newPage <= maxPage) {
         currentPage = newPage;
         renderTable();
     }
 }
 
-// Actions
-async function approveBien(id) {
-    if (!confirm('Confirmez-vous l\'approbation de ce bien ?')) return;
+// Actions : Approuver (ACTIVE)
+async function approveUser(id) {
+    if (!confirm('Valider ce commissionnaire ? Il pourra publier des biens.')) return;
     try {
-        const data = await apiFetch(`${API_BASE}/approve/${id}`, { method: 'PUT' });
+        const data = await apiFetch(`${API_BASE}/commissionnaires/${id}/approve`, { method: 'PUT' });
         if (data.success) {
-            showToast('Bien approuvé avec succès', 'success');
-            loadBiens();
+            showToast('Compte activé avec succès', 'success');
+            loadAllUsers();  // recharge la liste
         } else {
             showToast(data.message || 'Erreur', 'error');
         }
@@ -209,13 +218,14 @@ async function approveBien(id) {
     }
 }
 
-async function rejectBien(id) {
-    if (!confirm('Voulez-vous vraiment rejeter/supprimer ce bien ? Cette action est irréversible.')) return;
+// Actions : Rejeter (REJECTED)
+async function rejectUser(id) {
+    if (!confirm('Rejeter ce commissionnaire ? Il ne pourra pas publier.')) return;
     try {
-        const data = await apiFetch(`${API_BASE}/reject/${id}`, { method: 'DELETE' });
+        const data = await apiFetch(`${API_BASE}/commissionnaires/${id}/reject`, { method: 'PUT' });
         if (data.success) {
-            showToast('Bien supprimé avec succès', 'success');
-            loadBiens();
+            showToast('Compte rejeté', 'success');
+            loadAllUsers();
         } else {
             showToast(data.message || 'Erreur', 'error');
         }
@@ -224,64 +234,133 @@ async function rejectBien(id) {
     }
 }
 
-// Visualisation détaillée
-function viewBien(id) {
-    const bien = allBiens.find(b => b.id === id);
-    if (!bien) return;
+// Actions : Supprimer définitivement
+async function deleteUser(id) {
+    if (!confirm('Supprimer définitivement ce commissionnaire ? Action irréversible.')) return;
+    try {
+        const data = await apiFetch(`${API_BASE}/commissionnaires/${id}`, { method: 'DELETE' });
+        if (data.success) {
+            showToast('Utilisateur supprimé', 'success');
+            loadAllUsers();
+        } else {
+            showToast(data.message || 'Erreur', 'error');
+        }
+    } catch (err) {
+        showToast(err.message, 'error');
+    }
+}
+
+// Visualisation détaillée (appel à l'API dédiée)
+async function viewUser(id) {
+    try {
+        const data = await apiFetch(`${API_BASE}/commissionnaires/${id}`);
+        if (data.success) {
+            const user = data.user;
+            displayUserModal(user);
+        } else {
+            showToast(data.message || 'Erreur chargement', 'error');
+        }
+    } catch (err) {
+        showToast(err.message, 'error');
+    }
+}
+
+function displayUserModal(user) {
     const modalBody = document.getElementById('modalBody');
-    const imagesHtml = (bien.images && bien.images.length)
-        ? `<div class="images-gallery">
-            ${bien.images.map(img => `<img src="${img}" alt="photo" onclick="openLightbox('${img}')">`).join('')}
-           </div>`
-        : '<p>Aucune image</p>';
-    modalBody.innerHTML = `
-        <div class="info-grid">
-            <div class="info-item"><span class="info-label">ID</span><span class="info-value">${bien.id}</span></div>
-            <div class="info-item"><span class="info-label">Titre</span><span class="info-value">${escapeHtml(bien.titre)}</span></div>
-            <div class="info-item"><span class="info-label">Type de bien</span><span class="info-value">${bien.type_bien || '-'}</span></div>
-            <div class="info-item"><span class="info-label">Offre</span><span class="info-value">${bien.type_offre || '-'}</span></div>
-            <div class="info-item"><span class="info-label">Prix</span><span class="info-value">${bien.prix} ${bien.devise}</span></div>
-            <div class="info-item"><span class="info-label">Localisation</span><span class="info-value">${escapeHtml(bien.ville)} / ${escapeHtml(bien.commune)} / ${escapeHtml(bien.quartier)}</span></div>
-            <div class="info-item"><span class="info-label">Superficie</span><span class="info-value">${bien.superficie || '-'}</span></div>
-            <div class="info-item"><span class="info-label">Chambres</span><span class="info-value">${bien.chambres || 0}</span></div>
-            <div class="info-item"><span class="info-label">Salles de bain</span><span class="info-value">${bien.salles_bain || 0}</span></div>
-            <div class="info-item"><span class="info-label">Accessibilité</span><span class="info-value">${escapeHtml(bien.accessibilite) || '-'}</span></div>
-            <div class="info-item"><span class="info-label">Titre foncier</span><span class="info-value">${bien.type_titre || '-'} ${bien.numero_document ? '(N° '+bien.numero_document+')' : ''}</span></div>
-            <div class="info-item"><span class="info-label">Référence</span><span class="info-value">${escapeHtml(bien.reference) || '-'}</span></div>
-            <div class="info-item"><span class="info-label">Description</span><span class="info-value">${escapeHtml(bien.description) || '-'}</span></div>
-            <div class="info-item full-width" style="grid-column: 1/-1;"><span class="info-label">Photos</span><div>${imagesHtml}</div></div>
-        </div>
-    `;
-    document.getElementById('bienModal').style.display = 'flex';
+    const statusText = user.status === 'PENDING' ? 'En attente' : (user.status === 'ACTIVE' ? 'Actif' : 'Rejeté');
+    const statusClass = `status-${user.status}`;
+    
+    // Construction des champs optionnels
+    const fields = [
+        { label: 'ID', value: user.id },
+        { label: 'Nom complet', value: user.nom_complet },
+        { label: 'Sexe', value: user.sexe },
+        { label: 'Date de naissance', value: user.date_naissance ? new Date(user.date_naissance).toLocaleDateString() : '-' },
+        { label: 'Téléphone', value: user.telephone },
+        { label: 'WhatsApp', value: user.whatsapp },
+        { label: 'Email', value: user.email },
+        { label: 'Adresse', value: `${user.commune || ''} ${user.quartier || ''} ${user.avenue || ''} ${user.numero_maison || ''}`.trim() || '-' },
+        { label: 'Ville', value: user.ville },
+        { label: 'Numéro carte d\'identité', value: user.numero_carte },
+        { label: 'Spécialisation', value: user.specialisation },
+        { label: 'Zone d\'activité', value: user.zone_activite },
+        { label: 'Expérience (années)', value: user.experience },
+        { label: 'Agence / Structure', value: user.agence },
+        { label: 'Statut', value: `<span class="status-badge ${statusClass}">${statusText}</span>` },
+        { label: 'Date d\'inscription', value: user.created_at ? new Date(user.created_at).toLocaleString() : '-' }
+    ];
+    
+    let html = '<div class="info-grid">';
+    fields.forEach(field => {
+        if (field.value && field.value !== '-') {
+            html += `
+                <div class="info-item">
+                    <span class="info-label">${field.label}</span>
+                    <span class="info-value">${field.value}</span>
+                </div>
+            `;
+        }
+    });
+    
+    // Cartes d'identité (recto/verso)
+    if (user.carte_recto) {
+        html += `<div class="info-item"><span class="info-label">Carte recto</span><span class="info-value"><a href="${user.carte_recto}" target="_blank">Voir le document</a></span></div>`;
+    }
+    if (user.carte_verso) {
+        html += `<div class="info-item"><span class="info-label">Carte verso</span><span class="info-value"><a href="${user.carte_verso}" target="_blank">Voir le document</a></span></div>`;
+    }
+    if (user.photo_profil) {
+        html += `<div class="info-item full-width"><span class="info-label">Photo de profil</span><div><img src="${user.photo_profil}" alt="photo" style="max-width:150px; border-radius:8px;"></div></div>`;
+    }
+    html += '</div>';
+    
+    // Boutons d'action dans la modale
+    let actionButtons = '';
+    if (user.status === 'PENDING') {
+        actionButtons = `
+            <button class="action-btn btn-validate" onclick="approveUser(${user.id}); closeModal();">Approuver</button>
+            <button class="action-btn btn-reject" onclick="rejectUser(${user.id}); closeModal();">Rejeter</button>
+        `;
+    } else if (user.status === 'ACTIVE') {
+        actionButtons = `
+            <button class="action-btn btn-reject" onclick="rejectUser(${user.id}); closeModal();">Désactiver</button>
+            <button class="action-btn btn-delete" onclick="deleteUser(${user.id}); closeModal();">Supprimer</button>
+        `;
+    } else {
+        actionButtons = `
+            <button class="action-btn btn-validate" onclick="approveUser(${user.id}); closeModal();">Réactiver</button>
+            <button class="action-btn btn-delete" onclick="deleteUser(${user.id}); closeModal();">Supprimer</button>
+        `;
+    }
+    
+    modalBody.innerHTML = html + `<div class="modal-actions">${actionButtons}<button class="action-btn" onclick="closeModal()">Fermer</button></div>`;
+    document.getElementById('userModal').style.display = 'flex';
 }
 
-// Lightbox : ouverture en grand
-function openLightbox(imageUrl) {
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightboxImg');
-    lightboxImg.src = imageUrl;
-    lightbox.style.display = 'flex';
-}
-
-function closeLightbox() {
-    document.getElementById('lightbox').style.display = 'none';
-}
-
-function closeModal() {
-    document.getElementById('bienModal').style.display = 'none';
-}
-
-// Changer de vue
-function switchView(view) {
-    currentView = view;
+// Filtres UI
+function filterByStatus(status) {
+    currentStatus = status;
+    // Mettre à jour la classe active dans la sidebar
     document.querySelectorAll('.sidebar-nav li').forEach(li => li.classList.remove('active'));
-    document.querySelector(`.sidebar-nav li[data-view="${view}"]`).classList.add('active');
-    document.getElementById('pageTitle').innerText = (view === 'pending') ? 'Biens en attente' : 'Biens approuvés';
-    loadBiens();
+    document.querySelector(`.sidebar-nav li[data-status="${status}"]`).classList.add('active');
+    applyFiltersAndRender();
 }
 
-function loadCurrentView() {
-    loadBiens();
+function searchUsers() {
+    applyFiltersAndRender();
+}
+
+function filterByPeriod() {
+    applyFiltersAndRender();
+}
+
+function loadAllData() {
+    loadAllUsers();
+}
+
+// Fermeture modale
+function closeModal() {
+    document.getElementById('userModal').style.display = 'none';
 }
 
 // Déconnexion
@@ -306,18 +385,19 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = '/login.html';
         return;
     }
-    loadBiens();
-    document.getElementById('searchInput').addEventListener('input', filterBiens);
-    // Fermer la lightbox
-    const lightbox = document.getElementById('lightbox');
-    lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox || e.target.classList.contains('lightbox-close')) {
-            closeLightbox();
-        }
-    });
-    // Fermer le modal de détails en cliquant à l'extérieur
+    loadAllUsers();
+    
+    // Écouteur sur la recherche (touche Entrée)
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') searchUsers();
+        });
+    }
+    
+    // Fermer le modal en cliquant à l'extérieur
     window.onclick = function(event) {
-        const modal = document.getElementById('bienModal');
+        const modal = document.getElementById('userModal');
         if (event.target === modal) closeModal();
     };
 });

@@ -5,106 +5,167 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>SHOPNET-Immo | Commissionnaires vérifiés</title>
+  <title>SHOPNET IMMO | Portail immobilier de confiance</title>
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+  <header class="hero-section">
+    <div class="container">
+      <nav class="navbar">
+        <div class="logo">SHOPNET<span>IMMO</span></div>
+        <div class="nav-links">
+          <a href="#" class="nav-link">Accueil</a>
+          <a href="#" class="nav-link">À propos</a>
+          <a href="#" class="nav-link">Contact</a>
+        </div>
+      </nav>
 
-  <nav class="navbar">
-    <div class="container nav-flex">
-      <div class="logo">SHOPNET<span>-IMMOBILIER</span></div>
-      <div class="nav-actions">
-        <a href="#" class="btn-outline">Connexion</a>
-        <a href="#" class="btn-primary">Espace pro</a>
+      <div class="hero-grid">
+        <div class="hero-content">
+          <h1>La marketplace immobilière <span class="accent">intelligente</span></h1>
+          <p class="hero-description">
+            SHOPNET IMMO connecte acheteurs, vendeurs, commissionnaires et administrateurs sur une plateforme unique, sécurisée et transparente.
+          </p>
+          <div class="hero-buttons">
+            <a href="Fil.html" class="btn btn-primary">👥 Accéder aux biens</a>
+            <a href="Login.html" class="btn btn-outline">🔑 Espace commissionnaire</a>
+            <a href="AdminDashboard/verifie.html" class="btn btn-secondary">🛡️ Administration</a>
+          </div>
+        </div>
+        <div class="hero-image">
+          <img src="https://images.unsplash.com/photo-1582407947304-fd86f028f716?w=700&auto=format" alt="Villa moderne extérieure" loading="lazy">
+          <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=300&auto=format" alt="Appartement contemporain" class="floating-img" loading="lazy">
+        </div>
       </div>
     </div>
-  </nav>
+  </header>
 
   <main>
-    <section class="hero">
-      <div class="container hero-grid">
-        <div class="hero-text">
-          <h1>SHOPNET-IMMOBILIER</h1>
-          <p class="hero-subtitle">La plateforme immobilière des <strong>commissionnaires vérifiés</strong></p>
-          <p class="hero-description">Publiez vos annonces immobilières, trouvez des clients sérieux et développez votre activité en toute confiance.</p>
-          <div class="hero-buttons">
-            <a href="register.html" class="btn btn-primary">✨ Créer votre compte Business</a>
-            <a href="Login.html" class="btn btn-secondary">🔑 Connexion</a>
-          </div>
-          <div class="trust-mini">
-            <i class="fas fa-check-circle"></i> Toutes les annonces sont vérifiées par SHOPNET.
-          </div>
-        </div>
-        <div class="hero-visual">
-          <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600&auto=format" alt="Immobilier moderne" loading="lazy">
-        </div>
-      </div>
-    </section>
-
-    <section class="advantages">
+    <!-- Section rôles principaux -->
+    <section class="roles">
       <div class="container">
-        <div class="section-title">
-          <h2>Pourquoi rejoindre SHOPNET-IMMO ?</h2>
-          <p>Des avantages concrets pour les commissionnaires</p>
+        <div class="section-header">
+          <h2>Choisissez votre espace</h2>
+          <p>Une plateforme adaptée à chaque profil</p>
         </div>
-        <div class="advantages-grid">
-          <div class="card"><i class="fas fa-chart-line"></i><h3>Gagnez plus de clients</h3><p>Visibilité quotidienne auprès d'acheteurs qualifiés.</p></div>
-          <div class="card"><i class="fas fa-eye"></i><h3>Visibilité 24h/24</h3><p>Vos annonces restent actives jour et nuit.</p></div>
-          <div class="card"><i class="fas fa-briefcase"></i><h3>Plateforme pro</h3><p>Outils performants pour gérer votre portfolio.</p></div>
-          <div class="card"><i class="fas fa-bolt"></i><h3>Vendez rapidement</h3><p>Algorithme qui accélère les mises en relation.</p></div>
-          <div class="card"><i class="fas fa-home"></i><h3>Gestion simplifiée</h3><p>Ajoutez, modifiez vos biens en quelques clics.</p></div>
-          <div class="card"><i class="fas fa-lock"></i><h3>Paiements sécurisés</h3><p>Transactions et abonnements protégés.</p></div>
-          <div class="card"><i class="fas fa-user-shield"></i><h3>Confiance renforcée</h3><p>Badge “commissionnaire vérifié” visible par tous.</p></div>
-          <div class="card"><i class="fas fa-hourglass-half"></i><h3>Moins de perte de temps</h3><p>Filtrage des prospects non sérieux.</p></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="trust">
-      <div class="container trust-flex">
-        <div class="trust-content">
-          <i class="fas fa-shield-alt"></i>
-          <h2>Une sécurité totale pour vos transactions</h2>
-          <p>Toutes les annonces sont <strong>contrôlées et validées par SHOPNET-IMMO</strong> pour éviter les fraudes et garantir la sécurité des clients et commissionnaires.</p>
-          <div class="trust-stats">
-            <div><span>100%</span> annonces vérifiées</div>
-            <div><span>24/7</span> support pro</div>
-            <div><span>+1M</span> commissionnaires actifs</div>
+        <div class="roles-grid">
+          <!-- Carte Client -->
+          <div class="role-card">
+            <div class="role-icon"><i class="fas fa-users"></i></div>
+            <h3>Client / Visiteur</h3>
+            <p>Consultez les biens disponibles, recherchez par critères et contactez directement les commissionnaires.</p>
+            <a href="Fil.html" class="btn-role">Accéder aux biens →</a>
           </div>
-        </div>             
-        <div class="trust-image">
-          <img src="https://images.unsplash.com/photo-1560520653-9e0e4c89eb11?w=500&auto=format" alt="Sécurité">
+          <!-- Carte Commissionnaire -->
+          <div class="role-card">
+            <div class="role-icon"><i class="fas fa-handshake"></i></div>
+            <h3>Commissionnaire</h3>
+            <p>Profitez d’un espace pro pour publier vos annonces, gérer vos leads et développer votre portefeuille.</p>
+            <div class="role-buttons">
+              <a href="Login.html" class="btn-role-small">Connexion</a>
+              <a href="register.html" class="btn-role-small outline">Créer un compte</a>
+            </div>
+          </div>
+          <!-- Carte Admin -->
+          <div class="role-card">
+            <div class="role-icon"><i class="fas fa-shield-alt"></i></div>
+            <h3>Administrateur</h3>
+            <p>Modérez les annonces, validez les commissionnaires et gérez la plateforme en toute sécurité.</p>
+            <a href="AdminDashboard/verifie.html" class="btn-role">Accès Admin →</a>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="cta">
-      <div class="container cta-inner">
-        <h2>Rejoignez les commissionnaires déjà actifs</h2>
-        <p>Développez votre activité immobilière dès aujourd'hui.</p>
-        <a href="#" class="btn btn-outline-cta">🚀 Créer mon compte commissionnaire</a>
+    <!-- Section confiance / chiffres -->
+    <section class="stats">
+      <div class="container stats-grid">
+        <div class="stat-item">
+          <i class="fas fa-building"></i>
+          <span class="stat-number">2 500+</span>
+          <span>Biens disponibles</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-user-check"></i>
+          <span class="stat-number">180+</span>
+          <span>Commissionnaires actifs</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-clock"></i>
+          <span class="stat-number">24/7</span>
+          <span>Support dédié</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section images de motivation extérieures -->
+    <section class="gallery-showcase">
+      <div class="container">
+        <div class="gallery-flex">
+          <div class="gallery-text">
+            <h2>Des biens d'exception<br> dans des cadres remarquables</h2>
+            <p>Villas contemporaines, appartements en centre-ville, lofts industriels… Découvrez des propriétés sélectionnées avec soin.</p>
+          </div>
+          <div class="gallery-images">
+            <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&auto=format" alt="Maison moderne façade">
+            <img src="https://images.unsplash.com/photo-1600585154526-990dced4db0d?w=400&auto=format" alt="Villa avec piscine">
+            <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&auto=format" alt="Appartement vue mer">
+          </div>
+        </div>
       </div>
     </section>
   </main>
 
+  <!-- Footer complet (demandé) -->
   <footer class="footer">
-    <div class="container footer-flex">
-      <div class="footer-brand">SHOPNET<span>-IMMO</span></div>
-      <div class="footer-links">
-        <a href="#">À propos</a>
-        <a href="#">Conditions</a>
-        <a href="#">Confidentialité</a>
-        <a href="#">Contact</a>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>Assistance</h4>
+          <ul>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Support</a></li>
+            <li><a href="#">Besoin d'aide</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Légal</h4>
+          <ul>
+            <li><a href="#">Conditions d'utilisation</a></li>
+            <li><a href="#">Politique de confidentialité</a></li>
+            <li><a href="#">Sécurité & confiance</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Fonctionnement</h4>
+          <ul>
+            <li><a href="#">Comment ça marche</a></li>
+            <li><a href="#">Publier un bien</a></li>
+            <li><a href="#">Réserver un bien</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Entreprise</h4>
+          <ul>
+            <li><a href="#">Infos sur l'entreprise</a></li>
+            <li><a href="#">À propos de SHOPNET</a></li>
+            <li><a href="#">Devenir partenaire</a></li>
+          </ul>
+        </div>
       </div>
-      <div class="footer-social">
-        <i class="fab fa-linkedin-in"></i>
-        <i class="fab fa-twitter"></i>
-        <i class="fab fa-instagram"></i>
+      <div class="footer-branding">
+        <p class="brand-description">SHOPNET IMMOBILIER est une filiale de SHOPNET Core, spécialisée dans la mise en relation entre propriétaires, agents et clients pour la location et la vente de biens immobiliers en toute sécurité.</p>
+        <p class="trust-text">Nous facilitons vos transactions immobilières avec transparence, sécurité et simplicité.</p>
+        <div class="app-promo">
+          <i class="fab fa-google-play"></i> Installez aussi <strong>SHOPNET Officiel</strong> pour les commerçants expérimentés 
+          <a href="https://play.google.com/store/apps/details?id=com.shopai.app" target="_blank" rel="noopener">disponible sur Google Play →</a>
+        </div>
+        <p class="copyright">© 2025 - 2026 SHOPNET Core - SHOPNET IMMOBILIER. Tous droits réservés.</p>
+        <p class="extra-text">SHOPNET IMMOBILIER - Une solution simple et sécurisée pour vos besoins immobiliers.<br>Achetez, louez ou vendez vos biens immobiliers en toute confiance avec SHOPNET IMMOBILIER.</p>
       </div>
     </div>
-    <div class="footer-copyright">© 2025 SHOPNET-IMMO. Tous droits réservés.</div>
   </footer>
 
   <script src="script.js"></script>
