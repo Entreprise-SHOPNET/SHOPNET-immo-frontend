@@ -1,6 +1,5 @@
 
 
-// Configuration// Configuration
 const API_BASE = 'https://shopnet-immo-backend.onrender.com/api/agent';
 
 function getToken() {
@@ -19,11 +18,8 @@ async function apiFetch(url, options = {}) {
     }
   });
   if (!res.ok) {
-    let errMsg = `Erreur HTTP ${res.status}`;
-    try {
-      const err = await res.json();
-      errMsg = err.message || errMsg;
-    } catch(e) {}
+    let errMsg = `Erreur ${res.status}`;
+    try { const err = await res.json(); errMsg = err.message || errMsg; } catch(e) {}
     throw new Error(errMsg);
   }
   return res.json();
@@ -39,217 +35,200 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
   await loadUserProfile();
   await loadAgentBiens();
-  initEventListeners();
+  initMobileUI();
 });
-
-async function loadAgentBiens() {
-  try {
-    const response = await apiFetch('/my-biens');
-    if (response.success) {
-      allBiens = response.biens.map(bien => ({
-        ...bien,
-        coverImage: bien.images && bien.images.length > 0 ? bien.images[0] : null,
-        images: bien.images || []
-      }));
-      updateStatsCounters();
-      displayRecentProperties();
-      displayPropertiesGrid();
-    } else {
-      showToast('Erreur chargement biens', 'error');
-    }
-  } catch (err) {
-    console.error(err);
-    showToast(err.message, 'error');
-    if (err.message.includes('401')) {
-      localStorage.removeItem('token');
-      window.location.href = '/login.html';
-    }
-  }
-}
-
-function updateStatsCounters() {
-  const total = allBiens.length;
-  const approved = allBiens.filter(b => b.status === 'approved').length;
-  const pending = allBiens.filter(b => b.status === 'pending').length;
-  const rejected = allBiens.filter(b => b.status === 'rejected').length;
-  document.getElementById('statTotal').innerText = total;
-  document.getElementById('statApproved').innerText = approved;
-  document.getElementById('statPending').innerText = pending;
-  document.getElementById('statRejected').innerText = rejected;
-}
-
-function displayRecentProperties() {
-  const container = document.getElementById('recentPropertiesGrid');
-  if (!container) return;
-  const recent = allBiens.slice(0, 3);
-  if (recent.length === 0) {
-    container.innerHTML = `<p class="empty-message">Aucune annonce. <a href="publier-bien.html">Cliquez ici pour ajouter votre premier bien</a>.</p>`;
-    return;
-  }
-  container.innerHTML = recent.map(bien => createPropertyCard(bien)).join('');
-  attachViewEvents();
-}
-
-function displayPropertiesGrid() {
-  const container = document.getElementById('propertiesGrid');
-  if (!container) return;
-  let filtered = allBiens;
-  if (currentFilter !== 'all') {
-    filtered = allBiens.filter(b => b.status === currentFilter);
-  }
-  if (filtered.length === 0) {
-    container.innerHTML = `<p class="empty-message">Aucun bien ${currentFilter !== 'all' ? currentFilter : ''}.</p>`;
-    return;
-  }
-  container.innerHTML = filtered.map(bien => createPropertyCard(bien)).join('');
-  attachViewEvents();
-}
-
-function createPropertyCard(bien) {
-  const statusClass = bien.status;
-  const statusText = bien.status === 'approved' ? 'Approuvé' : (bien.status === 'pending' ? 'En attente' : 'Rejeté');
-  const price = `${parseFloat(bien.prix).toLocaleString()} ${bien.devise || 'USD'}`;
-  const imageUrl = bien.coverImage || 'https://placehold.co/400x300?text=SHOPNET-IMMO';
-  return `
-    <div class="property-card" data-id="${bien.id}">
-      <div class="property-image" style="background-image: url('${imageUrl}')">
-        <span class="property-status ${statusClass}">${statusText}</span>
-      </div>
-      <div class="property-info">
-        <h3>${escapeHtml(bien.titre || 'Sans titre')}</h3>
-        <div class="property-price">${price}</div>
-        <div class="property-location"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(bien.ville || '')} ${bien.commune ? ', '+bien.commune : ''}</div>
-        <div class="property-meta">
-          <span><i class="fas fa-bed"></i> ${bien.chambres || 0} ch.</span>
-          <span><i class="fas fa-bath"></i> ${bien.salles_bain || 0} sdb</span>
-          <span><i class="fas fa-arrows-alt"></i> ${bien.superficie || '-'}</span>
-        </div>
-        <button class="btn-view-property" data-id="${bien.id}">Voir détails</button>
-      </div>
-    </div>
-  `;
-}
-
-function attachViewEvents() {
-  document.querySelectorAll('.btn-view-property').forEach(btn => {
-    btn.removeEventListener('click', handleViewClick);
-    btn.addEventListener('click', handleViewClick);
-  });
-}
-
-// Modification : rediriger vers Voirdétails.html avec l'ID
-function handleViewClick(e) {
-  const id = e.currentTarget.getAttribute('data-id');
-  window.location.href = `Voirdétails.html?id=${id}`;
-}
-
-// Suppression de l'ancienne fonction openPropertyDetail, closeModal, etc. (plus nécessaires)
-// On garde uniquement les fonctions de navigation et les helpers
-
-function setActiveSection(section) {
-  document.querySelectorAll('.dashboard-section').forEach(sec => sec.classList.remove('active'));
-  const target = document.getElementById(`${section}Section`);
-  if (target) target.classList.add('active');
-  document.querySelectorAll('.sidebar-nav li a').forEach(link => link.classList.remove('active'));
-  const activeLink = Array.from(document.querySelectorAll('.sidebar-nav li a')).find(link => link.getAttribute('data-section') === section);
-  if (activeLink) activeLink.classList.add('active');
-  const titles = {
-    dashboard: 'Tableau de bord',
-    orders: 'Commandes',
-    clients: 'Clients',
-    revenue: 'Revenus',
-    properties: 'Mes biens',
-    messages: 'Messages',
-    notifications: 'Notifications',
-    settings: 'Paramètres'
-  };
-  document.getElementById('pageTitle').innerText = titles[section] || 'Tableau de bord';
-}
-
-function initEventListeners() {
-  document.querySelectorAll('.sidebar-nav li a').forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      const section = link.getAttribute('data-section');
-      if (section) setActiveSection(section);
-      if (section === 'properties') displayPropertiesGrid();
-    });
-  });
-  document.querySelectorAll('.filter-property-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      document.querySelectorAll('.filter-property-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentFilter = btn.getAttribute('data-filter');
-      displayPropertiesGrid();
-    });
-  });
-  document.getElementById('boostNowBtn')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    showToast('Booster bientôt disponible', 'info');
-  });
-  document.getElementById('supportWhatsappBtn')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    window.open('https://wa.me/243123456789', '_blank');
-  });
-  document.getElementById('logoutBtn')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    if (confirm('Déconnexion ?')) {
-      localStorage.removeItem('token');
-      window.location.href = '/login.html';
-    }
-  });
-}
 
 async function loadUserProfile() {
   try {
     const data = await apiFetch('/me');
     if (data.success) {
       const user = data.user;
-      document.getElementById('agentName').innerText = user.nom_complet || 'Commissionnaire';
-      document.getElementById('agentAvatar').src = user.photo_profil || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.nom_complet || 'Agent')}&background=0f3b5f&color=fff&size=100`;
-      const statusSpan = document.getElementById('agentStatus');
+      const name = user.nom_complet || 'Agent';
+      document.getElementById('welcomeName').innerText = name;
+      document.getElementById('drawerName').innerText = name;
+      const avatarUrl = user.photo_profil || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=0f3b5f&color=fff&size=100`;
+      document.getElementById('mobileAvatar').src = avatarUrl;
+      document.getElementById('drawerAvatar').src = avatarUrl;
+      const statusSpan = document.getElementById('drawerStatus');
       if (user.status === 'ACTIVE') {
         statusSpan.innerText = 'ACTIF';
         statusSpan.className = 'status-badge active';
       } else {
         statusSpan.innerText = user.status;
-        statusSpan.className = 'status-badge pending';
       }
-      updateStarsRating(4.5);
+      updateStarsRating(4.5, 'drawerStars');
     }
   } catch (err) {
     console.error(err);
-    if (err.message.includes('401')) {
-      localStorage.removeItem('token');
-      window.location.href = '/login.html';
-    }
+    if (err.message.includes('401')) logout();
   }
 }
 
-function updateStarsRating(rating) {
+async function loadAgentBiens() {
+  try {
+    const response = await apiFetch('/my-biens');
+    if (response.success) {
+      allBiens = response.biens.map(b => ({
+        ...b,
+        coverImage: b.images?.[0] || null
+      }));
+      updateStats();
+      displayRecentProperties();
+      displayAllProperties();
+    }
+  } catch (err) {
+    console.error(err);
+    showToast(err.message, 'error');
+  }
+}
+
+function updateStats() {
+  const total = allBiens.length;
+  const approved = allBiens.filter(b => b.status === 'approved').length;
+  const pending = allBiens.filter(b => b.status === 'pending').length;
+  const rejected = allBiens.filter(b => b.status === 'rejected').length;
+  document.getElementById('statTotalMob').innerText = total;
+  document.getElementById('statApprovedMob').innerText = approved;
+  document.getElementById('statPendingMob').innerText = pending;
+  document.getElementById('statRejectedMob').innerText = rejected;
+}
+
+function displayRecentProperties() {
+  const container = document.getElementById('recentListMobile');
+  const recent = allBiens.slice(0, 3);
+  if (!recent.length) {
+    container.innerHTML = '<div class="empty-state">Aucune annonce récente</div>';
+    return;
+  }
+  container.innerHTML = recent.map(b => createCard(b)).join('');
+  attachViewListeners();
+}
+
+function displayAllProperties() {
+  const container = document.getElementById('allPropertiesList');
+  let filtered = allBiens;
+  if (currentFilter !== 'all') filtered = allBiens.filter(b => b.status === currentFilter);
+  if (!filtered.length) {
+    container.innerHTML = '<div class="empty-state">Aucun bien trouvé</div>';
+    return;
+  }
+  container.innerHTML = filtered.map(b => createCard(b)).join('');
+  attachViewListeners();
+}
+
+function createCard(bien) {
+  const statusClass = bien.status;
+  const statusText = bien.status === 'approved' ? 'Approuvé' : (bien.status === 'pending' ? 'En attente' : 'Rejeté');
+  const price = `${parseFloat(bien.prix).toLocaleString()} ${bien.devise || 'USD'}`;
+  const imageUrl = bien.coverImage || 'https://placehold.co/400x300?text=SHOPNET';
+  return `
+    <div class="property-card-mobile" data-id="${bien.id}">
+      <div class="property-img" style="background-image: url('${imageUrl}')">
+        <span class="property-status ${statusClass}">${statusText}</span>
+      </div>
+      <div class="property-info">
+        <h4>${escapeHtml(bien.titre || 'Sans titre')}</h4>
+        <div class="property-price">${price}</div>
+        <div class="property-location">${escapeHtml(bien.ville || '')}</div>
+        <button class="btn-view" data-id="${bien.id}">Voir détails</button>
+      </div>
+    </div>
+  `;
+}
+
+function attachViewListeners() {
+  document.querySelectorAll('.btn-view').forEach(btn => {
+    btn.removeEventListener('click', handleView);
+    btn.addEventListener('click', handleView);
+  });
+}
+
+function handleView(e) {
+  const id = e.currentTarget.getAttribute('data-id');
+  window.location.href = `Voirdétails.html?id=${id}`;
+}
+
+function initMobileUI() {
+  // Navigation bottom
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tab = btn.getAttribute('data-tab');
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.getElementById(`${tab}View`).classList.add('active');
+      if (tab === 'properties') displayAllProperties();
+      if (tab === 'dashboard') displayRecentProperties();
+    });
+  });
+  // Filtres biens
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.getAttribute('data-filter');
+      displayAllProperties();
+    });
+  });
+  // Tiroir profil
+  const profileBtn = document.getElementById('profileMenuBtn');
+  const drawer = document.getElementById('profileDrawer');
+  profileBtn.addEventListener('click', () => drawer.classList.toggle('open'));
+  document.addEventListener('click', (e) => {
+    if (!drawer.contains(e.target) && !profileBtn.contains(e.target) && drawer.classList.contains('open')) {
+      drawer.classList.remove('open');
+    }
+  });
+  document.getElementById('drawerHomeBtn')?.addEventListener('click', (e) => {
+    e.preventDefault(); window.location.href = '/';
+  });
+  document.getElementById('drawerSupportBtn')?.addEventListener('click', (e) => {
+    e.preventDefault(); window.open('https://wa.me/243123456789', '_blank');
+  });
+  document.getElementById('drawerLogoutBtn')?.addEventListener('click', (e) => {
+    e.preventDefault(); logout();
+  });
+  document.getElementById('mobileBoostBtn')?.addEventListener('click', () => {
+    showToast('Booster bientôt disponible', 'info');
+  });
+}
+
+function logout() {
+  if (confirm('Déconnexion ?')) {
+    localStorage.removeItem('token');
+    window.location.href = '/login.html';
+  }
+}
+
+function updateStarsRating(rating, targetId) {
   const full = Math.floor(rating);
   const half = rating % 1 >= 0.5;
   let html = '';
   for (let i = 0; i < full; i++) html += '<i class="fas fa-star"></i>';
   if (half) html += '<i class="fas fa-star-half-alt"></i>';
   for (let i = 0; i < 5 - Math.ceil(rating); i++) html += '<i class="far fa-star"></i>';
-  document.getElementById('ratingStars').innerHTML = html;
+  document.getElementById(targetId).innerHTML = html;
+}
+
+function showToast(msg, type) {
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerText = msg;
+  toast.style.position = 'fixed';
+  toast.style.bottom = '70px';
+  toast.style.left = '16px';
+  toast.style.right = '16px';
+  toast.style.backgroundColor = type === 'error' ? '#ef4444' : '#0f3b5f';
+  toast.style.color = 'white';
+  toast.style.padding = '12px';
+  toast.style.borderRadius = '40px';
+  toast.style.textAlign = 'center';
+  toast.style.zIndex = '200';
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
 }
 
 function escapeHtml(str) {
   if (!str) return '';
-  return str.replace(/[&<>]/g, function(m) {
-    if (m === '&') return '&amp;';
-    if (m === '<') return '&lt;';
-    if (m === '>') return '&gt;';
-    return m;
-  });
-}
-
-function showToast(message, type = 'success') {
-  const toast = document.createElement('div');
-  toast.className = `toast ${type}`;
-  toast.innerText = message;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 4000);
+  return str.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m]));
 }
