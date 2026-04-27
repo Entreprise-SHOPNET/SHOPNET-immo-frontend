@@ -6,24 +6,20 @@ const API_URL = 'https://shopnet-immo-backend.onrender.com/api/biens/public';
 let allProperties = [];
 let filteredProperties = [];
 
-// Éléments DOM
 const featuredGrid = document.getElementById('featuredGrid');
 const allPropertiesGrid = document.getElementById('allPropertiesGrid');
 const searchCity = document.getElementById('searchCity');
 const filterType = document.getElementById('filterType');
 const filterOffer = document.getElementById('filterOffer');
 
-// Gestion des favoris (localStorage)
 let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
 
 function saveFavorites() {
   localStorage.setItem('favorites', JSON.stringify(favorites));
 }
-
 function isFavorite(id) {
   return favorites.includes(id);
 }
-
 function toggleFavorite(id, event) {
   event.stopPropagation();
   if (isFavorite(id)) {
@@ -32,15 +28,23 @@ function toggleFavorite(id, event) {
     favorites.push(id);
   }
   saveFavorites();
-  applyFilters(); // rafraîchit l'affichage
+  applyFilters();
 }
 
-// Chargement initial
 document.addEventListener('DOMContentLoaded', () => {
   fetchProperties();
   searchCity.addEventListener('input', applyFilters);
   filterType.addEventListener('change', applyFilters);
   filterOffer.addEventListener('change', applyFilters);
+
+  // Fermeture de la bannière Play Store
+  const closePromo = document.getElementById('closePromoStore');
+  const promoBanner = document.getElementById('promoStore');
+  if (closePromo && promoBanner) {
+    closePromo.addEventListener('click', () => {
+      promoBanner.style.display = 'none';
+    });
+  }
 });
 
 async function fetchProperties() {
@@ -61,7 +65,7 @@ async function fetchProperties() {
     }
   } catch (err) {
     console.error(err);
-    featuredGrid.innerHTML = `<div class="error-message">⚠️ Erreur : ${err.message}. Vérifiez votre connexion.</div>`;
+    featuredGrid.innerHTML = `<div class="error-message">⚠️ Erreur : ${err.message}</div>`;
     allPropertiesGrid.innerHTML = '';
   }
 }
@@ -82,20 +86,17 @@ function applyFilters() {
     return true;
   });
 
-  // Séparer les 3 premiers pour les "Coups de cœur", le reste pour la grille générale
   const featuredItems = filteredProperties.slice(0, 3);
   const restItems = filteredProperties.slice(3);
 
-  renderGrid(featuredGrid, featuredItems, true);
-  renderGrid(allPropertiesGrid, restItems, false);
+  renderGrid(featuredGrid, featuredItems);
+  renderGrid(allPropertiesGrid, restItems);
 }
 
-// Rendu générique d'une grille (avec un message si vide)
-function renderGrid(container, properties, isFeatured) {
+function renderGrid(container, properties) {
   if (!container) return;
-
-  if (properties.length === 0) {
-    container.innerHTML = '<div class="empty-message">✨ Aucun bien à afficher dans cette section.</div>';
+  if (!properties.length) {
+    container.innerHTML = '';  // aucun message "aucun bien" – grille vide
     return;
   }
 
@@ -108,7 +109,6 @@ function renderGrid(container, properties, isFeatured) {
   attachFavoriteEvents(container);
 }
 
-// Création d'une carte unique (compacte, adaptée à grille 2/3 colonnes)
 function createPropertyCard(prop) {
   const imageUrl = prop.images[0];
   const priceFormatted = new Intl.NumberFormat().format(prop.prix);
@@ -133,7 +133,6 @@ function createPropertyCard(prop) {
   `;
 }
 
-// Gestion du clic sur une carte (redirection vers détail)
 function attachCardClickEvents(container) {
   container.querySelectorAll('.property-card').forEach(card => {
     card.addEventListener('click', (e) => {
@@ -144,7 +143,6 @@ function attachCardClickEvents(container) {
   });
 }
 
-// Gestion des favoris pour les cartes d'un conteneur
 function attachFavoriteEvents(container) {
   container.querySelectorAll('.favorite-btn').forEach(btn => {
     btn.removeEventListener('click', handleFavoriteClick);

@@ -13,7 +13,19 @@
 </head>
 <body>
 
-  <!-- En-tête + filtres : fixés ensemble en haut -->
+  <!-- BANNIÈRE PUB PLAY STORE (fermable) -->
+  <div id="promoStore" class="promo-store">
+    <div class="promo-store-content">
+      <div class="promo-store-text">
+        <strong>📱 SHOPNET sur Play Store</strong>
+        <span>Pour profiter de toutes les offres simple et rapide</span>
+      </div>
+      <a href="https://play.google.com/store/apps/details?id=com.shopai.app" target="_blank" class="promo-store-btn">Télécharger</a>
+      <button id="closePromoStore" class="close-promo-store">&times;</button>
+    </div>
+  </div>
+
+  <!-- En-tête + filtres (fixés ensemble) -->
   <div class="sticky-top">
     <header class="header">
       <div class="container">
@@ -57,7 +69,7 @@
   </div>
 
   <main class="main container">
-    <div class="hero">
+    <div class="hero hero-right">
       <h1>Trouvez le bien qui vous correspond 💖</h1>
       <p>Appartements, villas et espaces professionnels sélectionnés pour vous.<br>Découvrez les meilleures opportunités immobilières à Lubumbashi et partout en RDC.</p>
     </div>
@@ -65,17 +77,13 @@
     <!-- Section Coups de cœur (max 3 premiers biens) -->
     <section class="featured-section">
       <h2 class="section-title">✨ Coups de cœur voyageurs</h2>
-      <div id="featuredGrid" class="properties-grid">
-        <div class="loader">Chargement...</div>
-      </div>
+      <div id="featuredGrid" class="properties-grid"></div>
     </section>
 
-    <!-- Section Tous les biens (reste des annonces) -->
+    <!-- Section Tous les biens -->
     <section class="all-properties-section">
       <h2 class="section-title">🏠 Toutes nos annonces</h2>
-      <div id="allPropertiesGrid" class="properties-grid">
-        <div class="loader">Chargement des annonces...</div>
-      </div>
+      <div id="allPropertiesGrid" class="properties-grid"></div>
     </section>
   </main>
 
