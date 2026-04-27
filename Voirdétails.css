@@ -8,103 +8,70 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  background: #f5f7fc;
-  color: #1e293b;
-  line-height: 1.4;
-  overflow-x: hidden;
+  background: #f8fafc;
+  color: #0f172a;
+  line-height: 1.5;
+  padding: 16px;
 }
 
-.detail-container {
-  max-width: 1200px;
+.container {
+  max-width: 800px;
   margin: 0 auto;
-  padding: 20px 16px;
 }
 
-/* Barre retour */
-.top-bar {
-  margin-bottom: 24px;
+.back-bar {
+  margin-bottom: 20px;
 }
 .back-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   background: white;
-  color: #1e293b;
-  padding: 8px 18px;
+  border: 1px solid #e2e8f0;
+  padding: 8px 16px;
   border-radius: 40px;
   text-decoration: none;
+  color: #1e293b;
   font-weight: 500;
-  font-size: 0.9rem;
-  border: 1px solid #e2e8f0;
   transition: 0.2s;
 }
 .back-btn:hover {
   background: #f1f5f9;
-  transform: translateX(-2px);
 }
 
-/* Titre */
-.hero-text h1 {
-  font-size: 1.8rem;
+.title {
+  font-size: 1.6rem;
   font-weight: 700;
-  color: #0f172a;
-  margin-bottom: 16px;
-}
-
-/* Statistiques en badges */
-.stats-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
   margin-bottom: 24px;
-}
-.stat-badge {
-  background: white;
-  border-radius: 60px;
-  padding: 6px 16px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 500;
-  font-size: 0.9rem;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
-}
-.stat-badge i {
-  color: #0f3b5f;
-}
-.stat-badge span {
-  font-weight: 700;
-  font-size: 1rem;
   color: #0f172a;
 }
 
-/* Grille d'informations */
-.info-grid {
-  margin-bottom: 32px;
-}
-.info-cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 16px;
-}
-.info-item {
+.details-area {
   background: white;
   border-radius: 20px;
-  padding: 14px 18px;
-  border: 1px solid #eef2f6;
-  transition: 0.15s;
+  border: 1px solid #e2e8f0;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.info-row {
+  display: flex;
+  flex-wrap: wrap;
+  border-bottom: 1px solid #f1f5f9;
+  padding: 8px 0;
 }
 .info-label {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
-  color: #64748b;
-  margin-bottom: 4px;
+  width: 140px;
+  font-weight: 600;
+  color: #475569;
 }
 .info-value {
-  font-size: 1rem;
-  font-weight: 500;
+  flex: 1;
   color: #0f172a;
   word-break: break-word;
 }
@@ -119,39 +86,25 @@ body {
 .status-badge.pending { background: #fef3c7; color: #92400e; }
 .status-badge.rejected { background: #fee2e2; color: #991b1b; }
 
-/* Galerie */
-#galleryBlock {
-  margin-top: 24px;
-}
-#galleryBlock h3 {
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #0f172a;
-}
-.images-gallery {
+.gallery {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
+  margin-top: 12px;
 }
-.images-gallery img {
-  width: 110px;
-  height: 110px;
+.gallery img {
+  width: 100px;
+  height: 100px;
   object-fit: cover;
-  border-radius: 16px;
+  border-radius: 12px;
   border: 1px solid #e2e8f0;
   cursor: pointer;
-  transition: transform 0.2s, border-color 0.2s;
+  transition: transform 0.2s;
 }
-.images-gallery img:hover {
-  transform: scale(1.03);
-  border-color: #0f3b5f;
+.gallery img:hover {
+  transform: scale(1.05);
 }
 
-/* Lightbox */
 .lightbox {
   display: none;
   position: fixed;
@@ -163,42 +116,29 @@ body {
   z-index: 1000;
   justify-content: center;
   align-items: center;
-  cursor: pointer;
 }
 .lightbox-img {
   max-width: 90%;
   max-height: 90%;
   object-fit: contain;
 }
-.lightbox-close {
+.close-lightbox {
   position: absolute;
   top: 20px;
   right: 30px;
   color: white;
   font-size: 40px;
-  font-weight: bold;
   cursor: pointer;
 }
 
 .loader {
   text-align: center;
-  padding: 2rem;
+  padding: 40px;
   color: #64748b;
 }
 
-/* Responsive */
-@media (max-width: 640px) {
-  .detail-container {
-    padding: 12px;
-  }
-  .hero-text h1 {
-    font-size: 1.4rem;
-  }
-  .info-cards {
-    grid-template-columns: 1fr;
-  }
-  .images-gallery img {
-    width: 90px;
-    height: 90px;
-  }
+@media (max-width: 600px) {
+  body { padding: 12px; }
+  .info-label { width: 120px; }
+  .title { font-size: 1.3rem; }
 }
