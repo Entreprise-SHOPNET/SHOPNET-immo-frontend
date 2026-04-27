@@ -5,13 +5,27 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
   <title>SHOPNET IMMOBILIER – Location & Vente</title>
   <link rel="stylesheet" href="Fil.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+
+  <!-- Bannière publicitaire fermable -->
+  <div id="promoBanner" class="promo-banner">
+    <div class="promo-content">
+      <i class="fas fa-download"></i>
+      <div class="promo-text">
+        <strong>📱 Téléchargez l'application</strong><br>
+        Accédez facilement et rapidement à SHOPNET
+      </div>
+      <a href="https://play.google.com/store/apps/details?id=com.shopai.app" target="_blank" class="promo-btn">Utilisez l'app</a>
+      <button id="closePromo" class="close-promo">&times;</button>
+    </div>
+  </div>
+
   <header class="header">
     <div class="container">
       <div class="logo">
@@ -58,13 +72,66 @@
       </div>
     </div>
 
-    <div class="properties-grid" id="propertiesGrid">
-      <div class="loader">Chargement des annonces...</div>
-    </div>
+    <!-- Carrousel horizontal : 3 annonces en avant -->
+    <section class="featured-section">
+      <h2 class="section-title">✨ Coups de cœur</h2>
+      <div class="horizontal-scroll" id="featuredScroll">
+        <div class="loader">Chargement...</div>
+      </div>
+    </section>
+
+    <!-- Grille principale d'annonces (cartes alternées) -->
+    <section class="properties-section">
+      <h2 class="section-title">🏠 Découvrez nos annonces</h2>
+      <div class="properties-grid" id="propertiesGrid">
+        <div class="loader">Chargement des annonces...</div>
+      </div>
+    </section>
   </main>
 
   <footer class="footer">
-    <p>© 2025 SHOPNET IMMOBILIER – Votre partenaire de confiance</p>
+    <div class="footer-container">
+      <div class="footer-columns">
+        <div class="footer-col">
+          <h4>Assistance</h4>
+          <ul>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Support</a></li>
+            <li><a href="#">Besoin d'aide</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Légal</h4>
+          <ul>
+            <li><a href="#">Conditions d'utilisation</a></li>
+            <li><a href="#">Politique de confidentialité</a></li>
+            <li><a href="#">Sécurité & confiance</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Fonctionnement</h4>
+          <ul>
+            <li><a href="#">Comment ça marche</a></li>
+            <li><a href="#">Publier un bien</a></li>
+            <li><a href="#">Réserver un bien</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Entreprise</h4>
+          <ul>
+            <li><a href="#">Infos sur l'entreprise</a></li>
+            <li><a href="#">À propos de SHOPNET</a></li>
+            <li><a href="#">Devenir partenaire</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-description">
+        <p>SHOPNET IMMOBILIER est une filiale de SHOPNET Core, spécialisée dans la mise en relation entre propriétaires, agents et clients pour la location et la vente de biens immobiliers en toute sécurité.</p>
+        <p>Nous facilitons vos transactions immobilières avec transparence, sécurité et simplicité.</p>
+        <p>© 2026 SHOPNET Core - SHOPNET IMMOBILIER. Tous droits réservés.</p>
+        <p>SHOPNET IMMOBILIER - Une solution simple et sécurisée pour vos besoins immobiliers.<br>Achetez, louez ou vendez vos biens immobiliers en toute confiance avec SHOPNET IMMOBILIER.</p>
+      </div>
+    </div>
   </footer>
 
   <script src="Fil.js"></script>
